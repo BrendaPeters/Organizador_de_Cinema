@@ -6,6 +6,7 @@
 }
 
 body {
+  position: relative;
   background-color: #121214;
   color: #e1e1e6;
   padding: 40px 20px;
@@ -24,7 +25,7 @@ header {
 
 header h1 {
   color: #7159c1; 
-  font-size: 2.5rem;
+  font-size: 4.2rem;
   margin-bottom: 5px;
 }
 
@@ -33,14 +34,27 @@ header p {
 }
 
 main {
+  position: relative;
   flex: 1;
-  max-width: 600px;
+  max-width: 900px;
   min-width: 0;
   width: 100%;
   background: #202024;
   padding: 30px;
   border-radius: 8px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+main::before {
+  content: "🎬";
+  position: absolute;
+  font-size: 100px;
+  opacity: 0.04;
+  bottom: 20px;
+  right: 20px;
+  pointer-events: none;
+  z-index: 0;
+  transform: rotate(-15deg);
 }
 
 section {
@@ -169,7 +183,7 @@ li {
 .layout-com-banners {
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: 60px;
   flex: 1;
   padding: 20px 16px;
   max-width: 100%;
@@ -178,8 +192,8 @@ li {
 }
 
 .banner {
-  width: 130px;
-  max-height: calc(100vh - 140px);
+  width: 250px;
+  max-height: calc(100vh - 250px);
   overflow: hidden;
   border-radius: 12px;
   background: #111;
@@ -202,11 +216,11 @@ li {
 }
 
 .banner-track-up {
-  animation: scrollUp 60s linear infinite;
+  animation: scrollUp 80s linear infinite;
 }
 
 .banner-track-down {
-  animation: scrollDown 60s linear infinite;
+  animation: scrollDown 80s linear infinite;
 }
 
 @keyframes scrollUp {
@@ -520,4 +534,16 @@ li {
   color: #888;
   font-size: 0.8rem;
   margin-top: 2px;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 150% 50% at 50% 0%, #433046 0%, transparent 70%),
+    radial-gradient(ellipse 150% 60% at 50% 100%, #433046 0%, transparent 60%);
+  opacity: 0.6;
+  pointer-events: none;
+  z-index: 0;
 }
