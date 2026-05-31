@@ -11,6 +11,7 @@
   <header>
     <h1>Pipoteca🍿</h1>
     <p>Organize sua noite de cinema em casa</p>
+    <button id="btn-api" class="btn-api-header">🔗 Dados da API</button>
   </header>
 
 <div class="layout-com-banners">
@@ -50,22 +51,40 @@
           <p>Digite o nome do filme para adicionar às sugestões:</p>
           <input type="text" id="input-modal-filme" placeholder="Nome do filme">
           <div class="modal-botoes">
-            <button id="btn-modal-cancelar">Cancelar</button>
-            <button id="btn-modal-add">Adicionar</button>
+            <button onclick="fecharModal('modal-sugestao')">Cancelar</button>
+            <button onclick="adicionarFilmeSugestao()">Adicionar</button>
           </div>
         </div>
       </div>
+      <div id="modal-api" class="modal-overlay">
+        <div class="modal-conteudo modal-api-conteudo">
+          <button id="fechar-api" class="modal-fechar-api">x</button>
+          <h3>Painel da API</h3>
+          <p class="modal-api-sub">Uso da API com fetch</p>
+
+          <div class="api-aba">
+            <button class="aba-btn ativa" data-target="users">👥 Usuários</button>
+            <button class="aba-btn" data-target="posts">Comentários Recentes</button>
+          </div>
+
+          <button id="btn-carregar-api" class="btn-api-carregar">Carregar</button>
+          <div id="api-resultado" class="api-resultado"></div>
+        </div>
+      </div>      
   </main>
-  
 
     <aside class="banner banner-right">
           <div class="banner-track banner-track-down"></div>
         </aside>
       </div>
+  <script src="js/modais.js"></script> 
   <script src="js/banner.js"></script>
   <script>
   document.addEventListener('DOMContentLoaded', montarBanners);
 </script>
   <script src="js/filmes_sugestao.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/storage_fetch.js"></script>
 </body>
 </html>

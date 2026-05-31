@@ -80,38 +80,21 @@ document.addEventListener("click", (e) => {
 });
 
 function adicionarSugestao() {
-  const nome = input.value.trim();
-  if (!nome) return;
-  filme_sugestao.push(nome);
-  input.value = nome;
-  dropdown.classList.remove("aberto");
-}
-
-const modal = document.getElementById("modal-sugestao");
-const inputModal = document.getElementById("input-modal-filme");
-
-function adicionarSugestao() {
+  const inputModal = document.getElementById("input-modal-filme");
   inputModal.value = "";
-  modal.classList.add("aberto");
+  abrirModal("modal-sugestao");
   inputModal.focus();
 }
 
-document.getElementById("btn-modal-cancelar").addEventListener("click", () => {
-  modal.classList.remove("aberto");
-});
-
-document.getElementById("btn-modal-add").addEventListener("click", () => {
-  const nome = inputModal.value.trim();
+function adicionarFilmeSugestao() {
+  const nome = document.getElementById("input-modal-filme").value.trim();
   if (!nome) return;
   filme_sugestao.push(nome);
-  modal.classList.remove("aberto");
-});
+  document.getElementById("input-modal-filme").value = "";
+  fecharModal("modal-sugestao");
+}
 
-modal.addEventListener("click", (e) => {
-  if (e.target === modal) modal.classList.remove("aberto");
-});
-
-inputModal.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") document.getElementById("btn-modal-add").click();
-  if (e.key === "Escape") modal.classList.remove("aberto");
+document.getElementById("input-modal-filme").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") adicionarFilmeSugestao();
+  if (e.key === "Escape") fecharModal("modal-sugestao");
 });
