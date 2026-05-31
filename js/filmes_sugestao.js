@@ -39,3 +39,79 @@ const filme_sugestao = [
   "Star Wars: Episódio IX - A Ascensão Skywalker",
   "Homem-Aranha: Através do Aranhaverso",
 ];
+
+const input = document.getElementById("input-title");
+const dropdown = document.getElementById("sugestoes-dropdown");
+
+function mostrarSugestoes(filtro = "") {
+  dropdown.innerHTML = "";
+  const lista = filtro
+    ? filme_sugestao.filter(f => f.toLowerCase().includes(filtro.toLowerCase()))
+    : filme_sugestao;
+
+  if (lista.length === 0) {
+    dropdown.classList.remove("aberto");
+    return;
+  }
+
+  lista.forEach(f => {
+    const div = document.createElement("div");
+    div.className = "opcao";
+    div.textContent = f;
+    div.addEventListener("click", () => {
+      input.value = f;
+      dropdown.classList.remove("aberto");
+    });
+    dropdown.appendChild(div);
+  });
+
+  dropdown.classList.add("aberto");
+}
+
+input.addEventListener("focus", () => mostrarSugestoes());
+input.addEventListener("input", () => {
+  mostrarSugestoes(input.value);
+});
+
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".input-wrapper")) {
+    dropdown.classList.remove("aberto");
+  }
+});
+
+function adicionarSugestao() {
+  const nome = input.value.trim();
+  if (!nome) return;
+  filme_sugestao.push(nome);
+  input.value = nome;
+  dropdown.classList.remove("aberto");
+}
+
+const modal = document.getElementById("modal-sugestao");
+const inputModal = document.getElementById("input-modal-filme");
+
+function adicionarSugestao() {
+  inputModal.value = "";
+  modal.classList.add("aberto");
+  inputModal.focus();
+}
+
+document.getElementById("btn-modal-cancelar").addEventListener("click", () => {
+  modal.classList.remove("aberto");
+});
+
+document.getElementById("btn-modal-add").addEventListener("click", () => {
+  const nome = inputModal.value.trim();
+  if (!nome) return;
+  filme_sugestao.push(nome);
+  modal.classList.remove("aberto");
+});
+
+modal.addEventListener("click", (e) => {
+  if (e.target === modal) modal.classList.remove("aberto");
+});
+
+inputModal.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") document.getElementById("btn-modal-add").click();
+  if (e.key === "Escape") modal.classList.remove("aberto");
+});
