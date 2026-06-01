@@ -94,12 +94,11 @@ function mostrarApp() {
   carregarEstado();
   renderCalendario();
 
-  // Garante que o calendário esteja visível
   const secCal = document.getElementById("section-calendario");
   if (secCal) secCal.style.display = "";
 }
 
-// ─── 2. CALENDÁRIO ──────────────────────────────────────────
+//  CALENDÁRIO 
 const MESES_PT = [
   "Janeiro","Fevereiro","Março","Abril","Maio","Junho",
   "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"
@@ -124,9 +123,14 @@ function renderCalendario() {
       ${DIAS_PT.map(d => `<div class="cal-dia-semana">${d}</div>`).join("")}
   `;
 
-  // Células vazias antes do 1º dia
-  for (let i = 0; i < primeiroDia; i++) {
-    html += `<div class="cal-celula vazia"></div>`;
+  const totalDiasMesAnterior = new Date(anoAtual, mesAtual, 0).getDate();
+  const inicio = totalDiasMesAnterior - primeiroDia + 1;
+  for (let i = inicio; i <= totalDiasMesAnterior; i++) {
+    let mesAnterior = mesAtual - 1;
+    let anoAnterior = anoAtual;
+    if (mesAnterior < 0) { mesAnterior = 11; anoAnterior--; }
+    const chave = chaveData(anoAnterior, mesAnterior, i);
+    html += `<div class="cal-celula cal-outro-mes" data-chave="${chave}" data-dia="${i}"><span class="cal-num">${i}</span></div>`;
   }
 
   for (let dia = 1; dia <= totalDias; dia++) {
@@ -150,6 +154,19 @@ function renderCalendario() {
         ${temFilmes && !bloqueado ? `<span class="cal-badge">${qtd}</span>` : ""}
       </div>
     `;
+  }
+
+  const totalCelulas = primeiroDia + totalDias;
+  const resto = totalCelulas % 7;
+  if (resto !== 0) {
+    const diasProximoMes = 7 - resto;
+    for (let i = 1; i <= diasProximoMes; i++) {
+      let proximoMes = mesAtual + 1;
+      let proximoAno = anoAtual;
+      if (proximoMes > 11) { proximoMes = 0; proximoAno++; }
+      const chave = chaveData(proximoAno, proximoMes, i);
+      html += `<div class="cal-celula cal-outro-mes" data-chave="${chave}" data-dia="${i}"><span class="cal-num">${i}</span></div>`;
+    }
   }
 
   html += `</div>`;

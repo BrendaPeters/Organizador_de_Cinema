@@ -9,18 +9,18 @@ body {
   position: relative;
   background-color: #121214;
   color: #e1e1e6;
-  padding: 40px 20px;
+  padding: 14px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 100vh;
-  overflow-x: hidden;
+  height: 100vh;
+  overflow: hidden;
   max-width: 100vw;
 }
 
 header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 16px;
 }
 
 header h1 {
@@ -35,12 +35,16 @@ header p {
 
 main {
   position: relative;
+  display: flex;
+  gap: 8px;
+  padding: 16px;
+  align-items: stretch;
+  flex-wrap: wrap;
   flex: 1;
   max-width: 900px;
   min-width: 0;
   width: 100%;
   background: #202024;
-  padding: 30px;
   border-radius: 8px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
@@ -58,12 +62,12 @@ main::before {
 }
 
 section {
-  margin-bottom: 35px;
+  margin-bottom: 20px;
 }
 
 h2 {
   font-size: 1.3rem;
-  margin-bottom: 20px;
+  margin-bottom: 14px;
   color: #7159c1;
   border-bottom: 1px solid #29292e;
   padding-bottom: 8px;
@@ -182,10 +186,10 @@ li {
 
 .layout-com-banners {
   display: flex;
+  padding: 12px 16px;
   justify-content: center;
   gap: 60px;
   flex: 1;
-  padding: 20px 16px;
   max-width: 100%;
   width: 100%;
   overflow: hidden;
@@ -216,20 +220,20 @@ li {
 }
 
 .banner-track-up {
-  animation: scrollUp 80s linear infinite;
+  animation: scrollUp 85s linear infinite;
 }
 
 .banner-track-down {
-  animation: scrollDown 80s linear infinite;
+  animation: scrollDown 85s linear infinite;
 }
 
 @keyframes scrollUp {
   0% { transform: translateY(0); }
-  100% { transform: translateY(-50%); }
+  100% { transform: translateY(-35%); }
 }
 
 @keyframes scrollDown {
-  0% { transform: translateY(-50%); }
+  0% { transform: translateY(-35%); }
   100% { transform: translateY(0); }
 }
 
@@ -252,33 +256,6 @@ li {
 .input-wrapper {
   position: relative;
   width: 100%;
-}
-
-.btn-limpar {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  font-size: 22px;
-  color: #666;
-  cursor: pointer;
-  display: none;
-  line-height: 1;
-  padding: 4px;
-}
-
-.btn-limpar.visivel {
-  display: block;
-}
-
-.btn-limpar:hover {
-  color: #fff;
-}
-
-#input-title {
-  padding-right: 36px;
 }
 
 .sugestoes-dropdown {
@@ -315,16 +292,6 @@ li {
 
 .sugestoes-dropdown .opcao:last-child {
   border-bottom: none;
-}
-
-.opcao-add {
-  color: #7159c1;
-  font-weight: 600;
-}
-
-.opcao-add:hover {
-  background: #7159c122;
-  color: #7159c1;
 }
 
 .add-sugestao-link {
@@ -411,28 +378,10 @@ li {
   font-size: 0.95rem;
 }
 
-#btn-modal-cancelar {
-  background: #333;
-  color: #aaa;
-}
-
-#btn-modal-cancelar:hover {
-  background: #444;
-}
-
-#btn-modal-add {
-  background: #7159c1;
-  color: #fff;
-}
-
-#btn-modal-add:hover {
-  background: #8257e5;
-}
-
 .btn-api-header {
   background: none;
-  border: 1px solid #7159c144;
-  color: #7159c1;
+  border: 1px solid #e2b04a44;
+  color: #e2b04a;
   padding: 6px 14px;
   border-radius: 6px;
   cursor: pointer;
@@ -441,8 +390,8 @@ li {
   transition: 0.2s;
 }
 .btn-api-header:hover {
-  background: #7159c122;
-  border-color: #7159c1;
+  background: #e2b04a22;
+  border-color: #e2b04a;
 }
 
 .modal-api-conteudo {
@@ -548,26 +497,33 @@ body::before {
   z-index: 0;
 }
 
-/* ============================================================
-   CALENDARIO.CSS  –  Cole no final do seu style.css existente
-   ============================================================ */
-
-/* ── Seção do calendário ── */
 #section-calendario {
-  margin: 2rem auto;
-  max-width: 420px;
+  flex: 0 0 450px;
+  min-width: 0;
+  margin-right: 15px;
+  margin-bottom: 0;
 }
 
-/* ── Container do calendário ── */
+#section-calendario h2 {
+  font-size: 1.1rem;
+  margin-bottom: 12px;
+}
+
+#list-section {
+  flex: 1;
+  min-width: 0;
+  margin-bottom: 0;
+}
+
 #calendario-container {
   background: #1a1a2e;
   border-radius: 12px;
   padding: 1rem;
+  min-height: 340px;
   box-shadow: 0 4px 20px rgba(0,0,0,.5);
   user-select: none;
 }
 
-/* ── Cabeçalho (mês/ano + navegação) ── */
 .cal-header {
   display: flex;
   align-items: center;
@@ -594,7 +550,6 @@ body::before {
 }
 .cal-nav:hover { transform: scale(1.3); }
 
-/* ── Grade do calendário ── */
 .cal-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -612,7 +567,7 @@ body::before {
 
 .cal-celula {
   position: relative;
-  aspect-ratio: 1;
+  min-height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -623,6 +578,16 @@ body::before {
   color: #ccc;
   flex-direction: column;
   gap: 2px;
+}
+
+.cal-outro-mes {
+  color: #555;
+  background: #16162a;
+}
+
+.cal-outro-mes:hover {
+  background: rgba(226,176,74,.1);
+  transform: scale(1.05);
 }
 
 .cal-celula:hover:not(.vazia):not(.bloqueado) {
@@ -672,7 +637,6 @@ body::before {
 
 .cal-lock { font-size: .7rem; line-height: 1; }
 
-/* ── Modal de login ── */
 .modal-login-conteudo {
   max-width: 360px;
   text-align: center;
@@ -684,7 +648,6 @@ body::before {
   font-size: 1rem;
 }
 
-/* ── Modal de agendamento ── */
 .modal-agenda-conteudo {
   max-width: 440px;
   width: 95vw;
@@ -713,7 +676,6 @@ body::before {
   font-size: .95rem;
 }
 
-/* ── Lista de filmes no modal ── */
 .agenda-lista { display: flex; flex-direction: column; gap: .4rem; }
 
 .agenda-item {
@@ -747,7 +709,6 @@ body::before {
 
 .agenda-vazia { color: #666; font-size: .88rem; text-align: center; padding: .5rem 0; }
 
-/* Botão de bloquear */
 .btn-bloquear {
   background: #8b2020;
   color: #fff;
@@ -760,7 +721,6 @@ body::before {
 }
 .btn-bloquear:hover { background: #b22e2e; }
 
-/* ── Lista de filmes agendados (página principal) ── */
 #lista-filmes { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .75rem; }
 
 .sem-filmes {
@@ -812,9 +772,54 @@ body::before {
 .filme-del:hover { color: #ff7070; }
 .filme-lock { font-size: .8rem; }
 
-/* ── Responsivo ── */
 @media (max-width: 480px) {
   #calendario-container { padding: .65rem; }
   .cal-celula { font-size: .78rem; }
   .cal-titulo { font-size: .95rem; }
 }
+
+.dicas-section {
+  width: 100%;
+  margin-top: 10px;
+  padding: 14px;
+  border: 1px solid #7159c122;
+  border-radius: 16px;
+  background: #1a1a1e;
+}
+
+.dicas-titulo {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #7159c1;
+  margin-bottom: 10px;
+}
+
+.dicas-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.dica {
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  gap: 10px;
+  font-size: 14px;
+  color: #bbb;
+  background: #202024;
+  border-radius: 10px;
+  border: 1px solid #ffffff08;
+}
+
+.dica-icone {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 500px) {
+  .dicas-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
