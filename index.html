@@ -20,28 +20,13 @@
   </aside>
 
   <main>
-    <section id="form-section">
-      <h2 id="form-title">Agendar Novo Filme</h2>
-      
-      <input type="hidden" id="item-id">
-
-      <label for="input-title">Nome do Filme:</label>
-      <div class="input-wrapper">
-        <input type="text" id="input-title" placeholder="Ex: Interestelar, Matrix...">
-        <div id="sugestoes-dropdown" class="sugestoes-dropdown"></div>
-      </div>
-      <p class="add-sugestao-link">Não encontrou seu filme? <span onclick="adicionarSugestao()">Adicionar às sugestões</span></p>
-      <br>
-      <div class="input-group">
-        <label for="input-date">Data da Sessão:</label>
-        <input type="text" id="input-date" placeholder="Ex: Sábado às 20h00">
-      </div>
-      <br>
-      <button id="btn-salvar" onclick="salvarFilme()">Agendar Filme</button>
-    </section>
+    <section id="section-calendario">
+     <h2>Calendário de Sessões</h2>
+     <div id="calendario-container"></div>
+   </section>
 
     <section id="list-section">
-      <h2>📅 Seus Filmes Agendados</h2>
+      <h2>Filmes Agendados</h2>
       <ul id="lista-filmes">
         </ul>
     </section>
@@ -56,6 +41,43 @@
           </div>
         </div>
       </div>
+      <section class="dicas-section">
+        <h2 class="dicas-titulo">🎞️ Dicas para um bom cinema em casa</h2>
+        <div class="dicas-grid">
+          <div class="dica">
+            <span class="dica-icone">🎧</span>
+            <span>Invista em um bom som</span>
+          </div>
+          <div class="dica">
+            <span class="dica-icone">🍿</span>
+            <span>Faça uma bela pipoca, doce ou salgada</span>
+          </div>
+          <div class="dica">
+            <span class="dica-icone">📺</span>
+            <span>Escolha uma tela grande ou projetor</span>
+          </div>
+          <div class="dica">
+            <span class="dica-icone">🔇</span>
+            <span>Deixe seu celular no silencioso</span>
+          </div>
+          <div class="dica">
+            <span class="dica-icone">📽</span>
+            <span>Cortinas blackout para bloquear a luz externa</span>
+          </div>
+          <div class="dica">
+            <span class="dica-icone">☀️</span>
+            <span>Ajuste brilho e contraste da tela</span>
+          </div>
+          <div class="dica">
+            <span class="dica-icone">🛋️</span>
+            <span>Sofá e um cobertor confortáveis fazem diferença</span>
+          </div>
+          <div class="dica">
+            <span class="dica-icone">💕</span>
+            <span>Junte sua família ou amigos</span>
+          </div>
+        </div>
+      </section>
       <div id="modal-api" class="modal-overlay">
         <div class="modal-conteudo modal-api-conteudo">
           <button id="fechar-api" class="modal-fechar-api">x</button>
@@ -77,14 +99,15 @@
           <div class="banner-track banner-track-down"></div>
         </aside>
       </div>
-  <script src="js/modais.js"></script> 
+  <script src="js/modais.js"></script>
+  <script src="js/storage.js"></script>
   <script src="js/banner.js"></script>
-  <script>
-  document.addEventListener('DOMContentLoaded', montarBanners);
-</script>
+  <script>document.addEventListener('DOMContentLoaded', montarBanners);</script>
   <script src="js/filmes_sugestao.js"></script>
   <script src="js/api.js"></script>
-  <script src="js/app.js"></script>
   <script src="js/storage_fetch.js"></script>
+  <script src="js/calendario.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
