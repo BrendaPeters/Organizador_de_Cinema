@@ -27,6 +27,10 @@ const BANNER_IMAGES = [
   "assets/toy_4.jpg",
   "assets/Toy_Story_3.jpg",
   "assets/toy2.jpg",
+  "assets/22.jpg",
+  "assets/23.jpeg",
+  "assets/24.jpeg",
+  "assets/25.jpeg",
 ];
 
 function montarBanners() {
