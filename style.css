@@ -547,3 +547,274 @@ body::before {
   pointer-events: none;
   z-index: 0;
 }
+
+/* ============================================================
+   CALENDARIO.CSS  –  Cole no final do seu style.css existente
+   ============================================================ */
+
+/* ── Seção do calendário ── */
+#section-calendario {
+  margin: 2rem auto;
+  max-width: 420px;
+}
+
+/* ── Container do calendário ── */
+#calendario-container {
+  background: #1a1a2e;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,.5);
+  user-select: none;
+}
+
+/* ── Cabeçalho (mês/ano + navegação) ── */
+.cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: .75rem;
+}
+
+.cal-titulo {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #e2b04a;
+  letter-spacing: .03em;
+}
+
+.cal-nav {
+  background: none;
+  border: none;
+  color: #e2b04a;
+  font-size: 1.8rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 .4rem;
+  transition: transform .15s;
+}
+.cal-nav:hover { transform: scale(1.3); }
+
+/* ── Grade do calendário ── */
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.cal-dia-semana {
+  text-align: center;
+  font-size: .72rem;
+  font-weight: 600;
+  color: #888;
+  padding-bottom: .25rem;
+  text-transform: uppercase;
+}
+
+.cal-celula {
+  position: relative;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background .15s, transform .1s;
+  font-size: .88rem;
+  color: #ccc;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cal-celula:hover:not(.vazia):not(.bloqueado) {
+  background: rgba(226,176,74,.18);
+  transform: scale(1.08);
+}
+
+.cal-celula.vazia { cursor: default; }
+
+.cal-celula.hoje .cal-num {
+  background: #e2b04a;
+  color: #111;
+  border-radius: 50%;
+  width: 1.6em;
+  height: 1.6em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.cal-celula.tem-filme {
+  background: rgba(100,180,100,.12);
+  color: #7ecc7e;
+}
+
+.cal-celula.selecionado {
+  background: rgba(226,176,74,.25);
+  outline: 2px solid #e2b04a;
+}
+
+.cal-celula.bloqueado {
+  background: rgba(200,50,50,.1);
+  color: #888;
+  cursor: not-allowed;
+}
+
+.cal-badge {
+  font-size: .6rem;
+  background: #e2b04a;
+  color: #111;
+  border-radius: 8px;
+  padding: 0 5px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.cal-lock { font-size: .7rem; line-height: 1; }
+
+/* ── Modal de login ── */
+.modal-login-conteudo {
+  max-width: 360px;
+  text-align: center;
+}
+.modal-login-conteudo h3 { font-size: 1.4rem; margin-bottom: .5rem; }
+.modal-login-conteudo input {
+  width: 100%;
+  margin-top: .75rem;
+  font-size: 1rem;
+}
+
+/* ── Modal de agendamento ── */
+.modal-agenda-conteudo {
+  max-width: 440px;
+  width: 95vw;
+}
+.modal-agenda-conteudo h3 { margin-bottom: .75rem; }
+
+.agenda-form {
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+  margin-bottom: 1rem;
+}
+
+.agenda-form label {
+  font-size: .85rem;
+  color: #aaa;
+  margin-bottom: -.2rem;
+}
+
+.agenda-form input[type="time"] {
+  padding: .45rem .6rem;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background: #1e1e2e;
+  color: #eee;
+  font-size: .95rem;
+}
+
+/* ── Lista de filmes no modal ── */
+.agenda-lista { display: flex; flex-direction: column; gap: .4rem; }
+
+.agenda-item {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  background: rgba(255,255,255,.05);
+  border-radius: 8px;
+  padding: .45rem .65rem;
+}
+
+.agenda-horario {
+  font-size: .8rem;
+  font-weight: 700;
+  color: #e2b04a;
+  min-width: 42px;
+}
+
+.agenda-titulo { flex: 1; font-size: .9rem; }
+
+.agenda-del {
+  background: none;
+  border: none;
+  color: #e55;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0 .2rem;
+  transition: color .15s;
+}
+.agenda-del:hover { color: #ff7070; }
+
+.agenda-vazia { color: #666; font-size: .88rem; text-align: center; padding: .5rem 0; }
+
+/* Botão de bloquear */
+.btn-bloquear {
+  background: #8b2020;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: .5rem 1rem;
+  cursor: pointer;
+  font-size: .9rem;
+  transition: background .2s;
+}
+.btn-bloquear:hover { background: #b22e2e; }
+
+/* ── Lista de filmes agendados (página principal) ── */
+#lista-filmes { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .75rem; }
+
+.sem-filmes {
+  color: #666;
+  font-style: italic;
+  font-size: .9rem;
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.dia-agendado {
+  background: rgba(255,255,255,.04);
+  border-radius: 10px;
+  padding: .75rem 1rem;
+  border-left: 3px solid #e2b04a;
+}
+.dia-agendado.bloqueado { border-left-color: #e55; opacity: .75; }
+
+.dia-cabecalho {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  margin-bottom: .45rem;
+  font-size: .92rem;
+}
+
+.tag-bloqueado { font-size: .75rem; color: #e55; }
+
+.dia-filmes { display: flex; flex-direction: column; gap: .3rem; }
+
+.filme-item {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  font-size: .88rem;
+}
+
+.filme-horario { color: #e2b04a; font-weight: 700; min-width: 42px; font-size: .8rem; }
+.filme-titulo  { flex: 1; }
+
+.filme-del {
+  background: none;
+  border: none;
+  color: #e55;
+  cursor: pointer;
+  font-size: .95rem;
+  padding: 0 .2rem;
+}
+.filme-del:hover { color: #ff7070; }
+.filme-lock { font-size: .8rem; }
+
+/* ── Responsivo ── */
+@media (max-width: 480px) {
+  #calendario-container { padding: .65rem; }
+  .cal-celula { font-size: .78rem; }
+  .cal-titulo { font-size: .95rem; }
+}
