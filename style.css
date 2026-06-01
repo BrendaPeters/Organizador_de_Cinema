@@ -2,7 +2,6 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
@@ -16,6 +15,10 @@ body {
   height: 100vh;
   overflow: hidden;
   max-width: 100vw;
+  font-family: "Pixelify Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
 }
 
 header {
@@ -27,10 +30,18 @@ header h1 {
   color: #7159c1; 
   font-size: 4.2rem;
   margin-bottom: 5px;
+  font-family: "Gasoek One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
 }
+
 
 header p {
   color: #a8a8b3;
+  font-family: "Pixelify Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
 }
 
 main {
@@ -66,11 +77,15 @@ section {
 }
 
 h2 {
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   margin-bottom: 14px;
   color: #7159c1;
   border-bottom: 1px solid #29292e;
   padding-bottom: 8px;
+  font-family: "Pixelify Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
 }
 
 .input-group {
@@ -167,6 +182,10 @@ li {
   font-weight: bold;
   font-size: 0.85rem;
   transition: background 0.2s;
+  font-family: "Pixelify Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
 }
 
 .btn-remover {
@@ -179,6 +198,10 @@ li {
   font-weight: bold;
   font-size: 0.85rem;
   transition: background 0.2s;
+  font-family: "Pixelify Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
 }
 
 .btn-editar:hover { background: #ffb829; }
@@ -339,6 +362,10 @@ li {
   color: #7159c1;
   font-size: 1.3rem;
   margin-bottom: 8px;
+  font-family: "Pixelify Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
 }
 
 .modal-conteudo p {
@@ -356,17 +383,29 @@ li {
   color: #fff;
   font-size: 1rem;
   margin-bottom: 16px;
+  font-family: "Pixelify Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
 }
 
 .modal-conteudo input:focus {
   outline: none;
   border-color: #7159c1;
+  font-family: "Pixelify Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
 }
 
 .modal-botoes {
   display: flex;
   gap: 8px;
   justify-content: flex-end;
+  font-family: "Pixelify Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
 }
 
 .modal-botoes button {
@@ -376,6 +415,10 @@ li {
   cursor: pointer;
   font-weight: 600;
   font-size: 0.95rem;
+  font-family: "Pixelify Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
 }
 
 .btn-api-header {
@@ -388,6 +431,10 @@ li {
   font-size: 0.85rem;
   margin-top: 10px;
   transition: 0.2s;
+  font-family: "Pixelify Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
 }
 .btn-api-header:hover {
   background: #e2b04a22;
@@ -416,6 +463,10 @@ li {
   color: #666;
   font-size: 0.85rem;
   margin-bottom: 16px;
+  font-family: "Pixelify Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
 }
 
 .api-aba {
@@ -435,11 +486,20 @@ li {
   font-weight: 600;
   font-size: 0.9rem;
   transition: 0.2s;
+  font-family: "Pixelify Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+
 }
 .aba-btn.ativa {
   background: #7159c122;
   border-color: #7159c1;
   color: #7159c1;
+  font-family: "Pixelify Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
 }
 .aba-btn:hover {
   border-color: #7159c166;
@@ -456,6 +516,11 @@ li {
   font-weight: 600;
   font-size: 0.95rem;
   margin-bottom: 16px;
+  font-family: "Pixelify Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+
 }
 .btn-api-carregar:hover { background: #00b853; }
 
@@ -470,6 +535,10 @@ li {
   padding: 10px 12px;
   border-radius: 6px;
   border-left: 4px solid #04d361;
+  font-family: "Pixelify Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
 }
 
 .api-resultado .item strong {
@@ -483,6 +552,10 @@ li {
   color: #888;
   font-size: 0.8rem;
   margin-top: 2px;
+  font-family: "Pixelify Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
 }
 
 body::before {
@@ -505,7 +578,7 @@ body::before {
 }
 
 #section-calendario h2 {
-  font-size: 1.1rem;
+  font-size: 1.5rem;
   margin-bottom: 12px;
 }
 
@@ -633,6 +706,10 @@ body::before {
   padding: 0 5px;
   font-weight: 700;
   line-height: 1.4;
+  font-family: "Pixelify Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
 }
 
 .cal-lock { font-size: .7rem; line-height: 1; }
@@ -692,6 +769,10 @@ body::before {
   font-weight: 700;
   color: #e2b04a;
   min-width: 42px;
+  font-family: "Pixelify Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
 }
 
 .agenda-titulo { flex: 1; font-size: .9rem; }
