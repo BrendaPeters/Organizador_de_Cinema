@@ -692,11 +692,6 @@ body::before {
   outline: 2px solid #e2b04a;
 }
 
-.cal-celula.bloqueado {
-  background: rgba(200,50,50,.1);
-  color: #888;
-  cursor: not-allowed;
-}
 
 .cal-badge {
   font-size: .6rem;
@@ -711,8 +706,6 @@ body::before {
   font-weight: 500;
   font-style: normal;
 }
-
-.cal-lock { font-size: .7rem; line-height: 1; }
 
 .modal-login-conteudo {
   max-width: 360px;
@@ -790,18 +783,6 @@ body::before {
 
 .agenda-vazia { color: #666; font-size: .88rem; text-align: center; padding: .5rem 0; }
 
-.btn-bloquear {
-  background: #8b2020;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: .5rem 1rem;
-  cursor: pointer;
-  font-size: .9rem;
-  transition: background .2s;
-}
-.btn-bloquear:hover { background: #b22e2e; }
-
 #lista-filmes { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .75rem; }
 
 .sem-filmes {
@@ -818,7 +799,6 @@ body::before {
   padding: .75rem 1rem;
   border-left: 3px solid #e2b04a;
 }
-.dia-agendado.bloqueado { border-left-color: #e55; opacity: .75; }
 
 .dia-cabecalho {
   display: flex;
@@ -827,8 +807,6 @@ body::before {
   margin-bottom: .45rem;
   font-size: .92rem;
 }
-
-.tag-bloqueado { font-size: .75rem; color: #e55; }
 
 .dia-filmes { display: flex; flex-direction: column; gap: .3rem; }
 
@@ -851,7 +829,6 @@ body::before {
   padding: 0 .2rem;
 }
 .filme-del:hover { color: #ff7070; }
-.filme-lock { font-size: .8rem; }
 
 @media (max-width: 480px) {
   #calendario-container { padding: .65rem; }
