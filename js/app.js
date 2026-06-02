@@ -60,6 +60,125 @@ function config_modal_api() {
   }
 }
 
+function buscarFilmeNaSugestao(nome) {
+  if (!nome) return null;
+  nome = nome.trim();
+  for (var i = 0; i < filme_sugestao.length; i++) {
+    if (filme_sugestao[i].toLowerCase() === nome.toLowerCase()) {
+      return filme_sugestao[i];
+    }
+  }
+  return null;
+}
+
+function escolherFilmeSugerido(tituloAtual, aoEscolher) {
+  var overlay = document.createElement("div");
+  overlay.className = "modal-overlay aberto";
+
+  var conteudo = document.createElement("div");
+  conteudo.className = "modal-conteudo modal-escolher-filme";
+
+  var titulo = document.createElement("h3");
+  titulo.textContent = "Escolher filme";
+
+  var select = document.createElement("select");
+  select.className = "select-filmes";
+  select.size = 12;
+
+  for (var i = 0; i < filme_sugestao.length; i++) {
+    var opcao = document.createElement("option");
+    opcao.value = i;
+    opcao.textContent = filme_sugestao[i];
+    if (tituloAtual && filme_sugestao[i].toLowerCase() === tituloAtual.toLowerCase()) {
+      opcao.selected = true;
+    }
+    select.appendChild(opcao);
+  }
+
+  var botoes = document.createElement("div");
+  botoes.className = "modal-botoes";
+
+  var btnCancelar = document.createElement("button");
+  btnCancelar.type = "button";
+  btnCancelar.textContent = "Cancelar";
+
+  var btnConfirmar = document.createElement("button");
+  btnConfirmar.type = "button";
+  btnConfirmar.textContent = "Confirmar";
+
+  botoes.appendChild(btnCancelar);
+  botoes.appendChild(btnConfirmar);
+  conteudo.appendChild(titulo);
+  conteudo.appendChild(select);
+  conteudo.appendChild(botoes);
+  overlay.appendChild(conteudo);
+  document.body.appendChild(overlay);
+
+  function fechar(resultado) {
+    overlay.remove();
+    aoEscolher(resultado);
+  }
+
+  btnCancelar.addEventListener("click", function() { fechar(null); });
+  overlay.addEventListener("click", function(evento) {
+    if (evento.target === overlay) fechar(null);
+  });
+  btnConfirmar.addEventListener("click", function() {
+    fechar(filme_sugestao[select.value]);
+  });
+}
+
+function editarFilmeAgendado(chave, id) {
+  if (!filmesAgendados[chave]) return;
+
+  var filmes = filmesAgendados[chave];
+  var filme = null;
+  var index = -1;
+
+  for (var i = 0; i < filmes.length; i++) {
+    if (String(filmes[i].id) === String(id)) {
+      filme = filmes[i];
+      index = i;
+      break;
+    }
+  }
+  if (!filme) return;
+
+  escolherFilmeSugerido(filme.titulo, function(novoTitulo) {
+    if (novoTitulo === null) return;
+
+    var novoHorario = prompt("Editar horário (HH:MM):", filme.horario);
+    if (novoHorario === null) return;
+    novoHorario = novoHorario.trim();
+    if (!novoHorario) return;
+
+    filmesAgendados[chave][index].titulo = novoTitulo;
+    filmesAgendados[chave][index].horario = novoHorario;
+    filmesAgendados[chave].sort(function(a, b) {
+      return a.horario.localeCompare(b.horario);
+    });
+
+    salvarEstado();
+    renderCalendario();
+    renderFilmesAgendados();
+
+    if (document.getElementById("agenda-lista-filmes")) {
+      renderListaFilmesDia(chave);
+    }
+  });
+}
+
+function configurarEdicaoFilmes() {
+  var lista = document.getElementById("lista-filmes");
+  if (!lista) return;
+
+  lista.addEventListener("click", function(evento) {
+    var botaoEditar = evento.target.closest(".filme-edit");
+    if (!botaoEditar) return;
+    editarFilmeAgendado(botaoEditar.dataset.chave, botaoEditar.dataset.id);
+  });
+}
+
 function add_filme() {
   var listaFilmes = document.getElementById("lista-filmes");
   if (!listaFilmes) return;
@@ -131,6 +250,7 @@ function load_posts() {
 
 document.addEventListener("DOMContentLoaded", function() {
   config_modal_api();
+  configurarEdicaoFilmes();
   add_filme();
   load_posts();
 });

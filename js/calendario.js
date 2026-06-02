@@ -190,9 +190,16 @@ function abrirModalAgendamento(chave) {
   });
 
   document.getElementById("agenda-btn-add").addEventListener("click", function() {
-    var nome = document.getElementById("agenda-input-filme").value.trim();
+    var nomeDigitado = document.getElementById("agenda-input-filme").value.trim();
     var horario = document.getElementById("agenda-input-horario").value;
-    if (!nome) { alert("Digite o nome do filme."); return; }
+    if (!nomeDigitado) { alert("Escolha um filme da lista"); return; }
+
+    var nome = buscarFilmeNaSugestao(nomeDigitado);
+    if (!nome) {
+      alert("Este filme não está na lista. Escolha um da lista ou adicione em \"+ Adicionar novo filme\".");
+      return;
+    }
+
     if (!filmesAgendados[chave]) filmesAgendados[chave] = [];
     var conflito = false;
     for (var i = 0; i < filmesAgendados[chave].length; i++) {
@@ -235,8 +242,8 @@ function renderListaFilmesDia(chave) {
       '<span class="agenda-horario">' + filmes[i].horario + '</span>' +
       '<span class="agenda-titulo">' + filmes[i].titulo + '</span>' +
       '<div class="agenda-acoes">' +
-        '<button class="agenda-edit" data-id="' + filmes[i].id + '" title="Editar">✎</button>' +
-        '<button class="agenda-del" data-id="' + filmes[i].id + '" title="Remover">✕</button>' +
+        '<button type="button" class="agenda-edit" data-id="' + filmes[i].id + '" title="Editar"><span class="material-symbols-outlined">edit</span></button>' +
+        '<button type="button" class="agenda-del" data-id="' + filmes[i].id + '" title="Remover"><span class="material-symbols-outlined">close_small</span></button>' +
       '</div>' +
     '</div>';
   }
@@ -246,7 +253,7 @@ function renderListaFilmesDia(chave) {
   for (var i = 0; i < botoesEdit.length; i++) {
     botoesEdit[i].addEventListener("click", function() {
       var id = this.dataset.id;
-      editarFilme(chave, id);
+      editarFilmeAgendado(chave, id);
     });
   }
 
@@ -257,39 +264,6 @@ function renderListaFilmesDia(chave) {
       removerFilme(chave, id);
     });
   }
-}
-
-function editarFilme(chave, id) {
-  var filmes = filmesAgendados[chave];
-  var filme = null;
-  var index = -1;
-  for (var i = 0; i < filmes.length; i++) {
-    if (filmes[i].id === id) {
-      filme = filmes[i];
-      index = i;
-      break;
-    }
-  }
-  if (!filme) return;
-
-  var novoTitulo = prompt("Editar nome do filme:", filme.titulo);
-  if (novoTitulo === null) return;
-  novoTitulo = novoTitulo.trim();
-  if (!novoTitulo) return;
-
-  var novoHorario = prompt("Editar horário (HH:MM):", filme.horario);
-  if (novoHorario === null) return;
-  novoHorario = novoHorario.trim();
-  if (!novoHorario) return;
-
-  filmesAgendados[chave][index].titulo = novoTitulo;
-  filmesAgendados[chave][index].horario = novoHorario;
-  filmesAgendados[chave].sort(function(a, b) { return a.horario.localeCompare(b.horario); });
-
-  salvarEstado();
-  renderListaFilmesDia(chave);
-  renderCalendario();
-  renderFilmesAgendados();
 }
 
 function removerFilme(chave, id) {
@@ -335,23 +309,14 @@ function renderFilmesAgendados() {
         '<span class="filme-horario">' + filmes[j].horario + '</span>' +
         '<span class="filme-titulo">' + filmes[j].titulo + '</span>' +
         '<div class="filme-acoes">' +
-          '<button class="filme-edit" data-chave="' + chaves[i] + '" data-id="' + filmes[j].id + '" title="Editar">✎</button>' +
-          '<button class="filme-del" data-chave="' + chaves[i] + '" data-id="' + filmes[j].id + '" title="Remover">✕</button>' +
+          '<button type="button" class="filme-edit" data-chave="' + chaves[i] + '" data-id="' + filmes[j].id + '" title="Editar"><span class="material-symbols-outlined">edit</span></button>' +
+          '<button type="button" class="filme-del" data-chave="' + chaves[i] + '" data-id="' + filmes[j].id + '" title="Remover"><span class="material-symbols-outlined">close_small</span></button>' +
         '</div>' +
       '</div>';
     }
     html += '</div></li>';
   }
   lista.innerHTML = html;
-
-  var botoesEdit = lista.querySelectorAll(".filme-edit");
-  for (var i = 0; i < botoesEdit.length; i++) {
-    botoesEdit[i].addEventListener("click", function() {
-      var chave = this.dataset.chave;
-      var id = this.dataset.id;
-      editarFilme(chave, id);
-    });
-  }
 
   var botoesDel = lista.querySelectorAll(".filme-del");
   for (var i = 0; i < botoesDel.length; i++) {
