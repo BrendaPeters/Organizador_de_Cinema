@@ -6,7 +6,7 @@
   <title>Organizador de Cinema em Casa</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Gasoek+One&family=Pixelify+Sans:wght@400..700&family=Rubik+Doodle+Triangles&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Gasoek+One&family=Pixelify+Sans&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,103 +14,50 @@
   <header>
     <h1>Pipoteca</h1>
     <p>Organize sua noite de cinema em casa</p>
-    <button id="btn-api" class="btn-api-header">Dados da API</button>
+    <button id="btn-api">Dados da API</button>
   </header>
 
-<div class="layout-com-banners">
-  <aside class="banner banner-left">
-    <div class="banner-track banner-track-up"></div>
-  </aside>
+  <div class="layout-com-banners">
+    <aside class="banner banner-left">
+      <div class="banner-track banner-track-up"></div>
+    </aside>
 
-  <main>
-    <section id="section-calendario">
-     <h2>Calendário de Sessões</h2>
-     <div id="calendario-container"></div>
-   </section>
-
-    <section id="list-section">
-      <h2>Filmes Agendados</h2>
-      <ul id="lista-filmes">
-        </ul>
-    </section>
-      <div id="modal-sugestao" class="modal-overlay">
-        <div class="modal-conteudo">
-          <h3>Adicionar novo filme</h3>
-          <p>Digite o nome do filme para adicionar às sugestões:</p>
-          <input type="text" id="input-modal-filme" placeholder="Nome do filme">
-          <div class="modal-botoes">
-            <button onclick="fecharModal('modal-sugestao')">Cancelar</button>
-            <button onclick="adicionarFilmeSugestao()">Adicionar</button>
-          </div>
-        </div>
-      </div>
-      <section class="dicas-section">
-        <h2 class="dicas-titulo">Dicas para um bom cinema em casa</h2>
-        <div class="dicas-grid">
-          <div class="dica">
-            <span class="dica-icone"></span>
-            <span>Invista em um bom som</span>
-          </div>
-          <div class="dica">
-            <span class="dica-icone"></span>
-            <span>Faça uma bela pipoca, doce ou salgada</span>
-          </div>
-          <div class="dica">
-            <span class="dica-icone"></span>
-            <span>Escolha uma tela grande ou projetor</span>
-          </div>
-          <div class="dica">
-            <span class="dica-icone"></span>
-            <span>Deixe seu celular no silencioso</span>
-          </div>
-          <div class="dica">
-            <span class="dica-icone"></span>
-            <span>Cortinas blackout para bloquear a luz externa</span>
-          </div>
-          <div class="dica">
-            <span class="dica-icone"></span>
-            <span>Ajuste brilho e contraste da tela</span>
-          </div>
-          <div class="dica">
-            <span class="dica-icone"></span>
-            <span>Sofá e um cobertor confortáveis fazem diferença</span>
-          </div>
-          <div class="dica">
-            <span class="dica-icone"></span>
-            <span>Junte sua família ou amigos</span>
-          </div>
-        </div>
+    <main>
+      <section id="section-calendario">
+        <h2>Calendário de Sessões</h2>
+        <div id="calendario-container"></div>
       </section>
-      <div id="modal-api" class="modal-overlay">
-        <div class="modal-conteudo modal-api-conteudo">
-          <button id="fechar-api" class="modal-fechar-api">x</button>
-          <h3>Painel da API</h3>
-          <p class="modal-api-sub">Uso da API com fetch</p>
 
-          <div class="api-aba">
-            <button class="aba-btn ativa" data-target="users">Usuários</button>
-            <button class="aba-btn" data-target="posts">Comentários</button>
-          </div>
+      <section id="list-section">
+        <h2>Filmes Agendados</h2>
+        <ul id="lista-filmes"></ul>
+      </section>
 
-          <button id="btn-carregar-api" class="btn-api-carregar">Carregar</button>
-          <div id="api-resultado" class="api-resultado"></div>
-        </div>
-      </div>      
-  </main>
+      <section class="comentarios-section">
+        <h2 class="comentarios-titulo">Comentários</h2>
+        <div id="comentarios-container" class="comentarios-container"></div>
+      </section>
+    </main>
 
     <aside class="banner banner-right">
-          <div class="banner-track banner-track-down"></div>
-        </aside>
-      </div>
-  <script src="js/modais.js"></script>
-  <script src="js/storage.js"></script>
+      <div class="banner-track banner-track-down"></div>
+    </aside>
+  </div>
+
+  <div id="modal-api" class="modal-overlay">
+    <div class="modal-conteudo modal-api-conteudo">
+      <button id="fechar-api" class="modal-fechar-api">x</button>
+      <h3>Painel da API</h3>
+      <p class="modal-api-sub">Uso da API com fetch</p>
+      <button id="btn-carregar-api" class="btn-api-carregar">Carregar Usuários</button>
+      <div id="api-resultado" class="dados-api"></div>
+    </div>
+  </div>
+
+
   <script src="js/banner.js"></script>
-  <script>document.addEventListener('DOMContentLoaded', montarBanners);</script>
   <script src="js/filmes_sugestao.js"></script>
-  <script src="js/api.js"></script>
-  <script src="js/storage_fetch.js"></script>
   <script src="js/calendario.js"></script>
-  <script src="js/render.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

@@ -1,140 +1,136 @@
-let usuarios = [];
-let posts = [];
+var lista_usuarios = [];
 
-function renderList(id, dados, nomeCampo, campoExtra) {
-  const container = document.getElementById(id);
-  container.innerHTML = "";
-  dados.forEach((item, idx) => {
-    const div = document.createElement("div");
-    div.className = "api-item";
-    div.innerHTML = `
-      <div class="info">
-        <strong>${item[nomeCampo]}</strong>
-        ${campoExtra ? `<span>${item[campoExtra]}</span>` : ""}
-      </div>
-      <div class="acoes">
-        <button class="btn-edit" data-idx="${idx}">Editar</button>
-        <button class="btn-del" data-idx="${idx}">Remover</button>
-      </div>
-    `;
-    div.querySelector(".btn-edit").onclick = () => {
-      const novo = prompt("Editar:", item[nomeCampo]);
-      if (novo && novo.trim()) {
-        item[nomeCampo] = novo.trim();
-        renderList(id, dados, nomeCampo, campoExtra);
+function inicio_modal(id) {
+  document.getElementById(id).classList.add("aberto");
+}
+
+function fim_modal(id) {
+  document.getElementById(id).classList.remove("aberto");
+}
+
+function mostrarUsers() {
+  var divResultado = document.getElementById("api-resultado");
+  if (!divResultado) return;
+
+  if (lista_usuarios.length === 0) {
+    divResultado.innerHTML = "<p>Nenhum usuário carregado.</p>";
+    return;
+  }
+
+  var html = "";
+  for (var i = 0; i < lista_usuarios.length; i++) {
+    var usuario = lista_usuarios[i];
+    var cidade = usuario.address && usuario.address.city ? usuario.address.city : "—";
+    html += "<p>" + usuario.name + "<br>" + usuario.email + "<br>" + cidade + "</p>";
+  }
+  divResultado.innerHTML = html;
+}
+
+function config_modal_api() {
+  var botao_api = document.getElementById("btn-api");
+  if (botao_api) {
+    botao_api.addEventListener("click", function() {
+      inicio_modal("modal-api");
+    });
+  }
+
+  var botao_fechar_api = document.getElementById("fechar-api");
+  if (botao_fechar_api) {
+    botao_fechar_api.addEventListener("click", function() {
+      fim_modal("modal-api");
+    });
+  }
+
+  var botao_carregar_usuarios = document.getElementById("btn-carregar-api");
+  if (botao_carregar_usuarios) {
+    botao_carregar_usuarios.addEventListener("click", function() {
+      var divResultado = document.getElementById("api-resultado");
+      divResultado.innerHTML = "<p>Carregando...</p>";
+
+      fetch("https://jsonplaceholder.typicode.com/users")
+        .then(function(resposta) { return resposta.json(); })
+        .then(function(dados) {
+          lista_usuarios = dados;
+          mostrarUsers();
+        })
+        .catch(function() {
+          divResultado.innerHTML = "<p>Erro ao carregar usuários.</p>";
+        });
+    });
+  }
+}
+
+function add_filme() {
+  var listaFilmes = document.getElementById("lista-filmes");
+  if (!listaFilmes) return;
+
+  var botao_add = document.createElement("div");
+  botao_add.innerHTML = '<a href="#" id="link-add-filme">+ Adicionar novo filme</a>';
+  listaFilmes.parentNode.insertBefore(botao_add, listaFilmes.nextSibling);
+
+  document.getElementById("link-add-filme").addEventListener("click", function(evento) {
+    evento.preventDefault();
+
+    var nomeFilme = prompt("Digite o nome do filme:");
+    if (nomeFilme === null || nomeFilme.trim() === "") return;
+    nomeFilme = nomeFilme.trim();
+
+    var tem_filme = false;
+    for (var i = 0; i < filme_sugestao.length; i++) {
+      if (filme_sugestao[i].toLowerCase() === nomeFilme.toLowerCase()) {
+        tem_filme = true;
+        break;
       }
-    };
-    div.querySelector(".btn-del").onclick = () => {
-      if (confirm(`Remover "${item[nomeCampo]}"?`)) {
-        dados.splice(idx, 1);
-        renderList(id, dados, nomeCampo, campoExtra);
-      }
-    };
-    container.appendChild(div);
+    }
+
+    if (tem_filme === false) {
+      filme_sugestao.push(nomeFilme);
+      filme_sugestao.sort();
+      alert("Filme '" + nomeFilme + "' adicionado às sugestões!");
+    } else {
+      alert("Este filme já está na lista!");
+    }
   });
 }
 
-document.getElementById("btn-users").onclick = async () => {
-  usuarios = await fetchUsers();
-  renderList("lista-users", usuarios, "name", "email");
-};
+function load_posts() {
+  var container = document.getElementById("comentarios-container");
+  if (!container) return;
 
-document.getElementById("btn-posts").onclick = async () => {
-  posts = await fetchPosts();
-  renderList("lista-posts", posts, "title", "body");
-};
-// Carrega os filmes salvos ao abrir a página
-let filmes = carregarFilmes();
-renderFilmes(filmes);
- 
-// Chamada pelo onclick="salvarFilme()" no botão do HTML
-function salvarFilme() {
-  const inputTitulo = document.getElementById("input-title");
-  const inputData   = document.getElementById("input-date");
-  const inputId     = document.getElementById("item-id");
-  const titulo      = inputTitulo.value.trim();
-  const data        = inputData.value.trim();
- 
-  if (!titulo) {
-    inputTitulo.focus();
-    inputTitulo.style.borderColor = "#ca4949";
-    setTimeout(() => { inputTitulo.style.borderColor = "#29292e"; }, 1500);
-    return;
-  }
- 
-  if (inputId.value) {
-    // EDITAR filme existente
-    const id = Number(inputId.value);
-    const filme = filmes.find(f => f.id === id);
-    if (filme) {
-      filme.titulo = titulo;
-      filme.data   = data;
-    }
-    salvarFilmes(filmes);
-    renderFilmes(filmes);
-    cancelarEdicao();
-  } else {
-    // ADICIONAR novo filme
-    filmes.unshift({ id: Date.now(), titulo, data });
-    salvarFilmes(filmes);
-    renderFilmes(filmes);
-    inputTitulo.value = "";
-    inputData.value   = "";
-    inputTitulo.focus();
-  }
+  container.innerHTML = "<p>Carregando...</p>";
+
+  fetch("https://jsonplaceholder.typicode.com/users")
+    .then(function(resposta) { return resposta.json(); })
+    .then(function(usuarios) {
+      return fetch("https://jsonplaceholder.typicode.com/posts")
+        .then(function(resposta) { return resposta.json(); })
+        .then(function(posts) {
+          var nomes_ID = {};
+          for (var u = 0; u < usuarios.length; u++) {
+            nomes_ID[usuarios[u].id] = usuarios[u].name;
+          }
+
+          var html = "";
+          for (var i = 0; i < Math.min(posts.length, 20); i++) {
+            var post = posts[i];
+            var nomeAutor = nomes_ID[post.userId] || "Desconhecido";
+
+            html += '<div class="comentario-item">' +
+              "<strong>" + nomeAutor + "</strong>" +
+              "<span>" + post.title + "<br>" + post.body + "</span>" +
+              "</div>";
+          }
+
+          container.innerHTML = html;
+        });
+    })
+    .catch(function() {
+      container.innerHTML = "<p>Erro ao carregar posts.</p>";
+    });
 }
- 
-// Chamada pelo onclick="editarFilme(id)" no botão Editar de cada item
-function editarFilme(id) {
-  const filme = filmes.find(f => f.id === id);
-  if (!filme) return;
- 
-  document.getElementById("input-title").value      = filme.titulo;
-  document.getElementById("input-date").value       = filme.data || "";
-  document.getElementById("item-id").value          = id;
-  document.getElementById("form-title").textContent = "✏️ Editando Filme";
-  document.getElementById("btn-salvar").textContent  = "Salvar Alterações";
- 
-  if (!document.getElementById("btn-cancelar")) {
-    const btn = document.createElement("button");
-    btn.id            = "btn-cancelar";
-    btn.textContent   = "Cancelar";
-    btn.style.cssText = "background:#333;color:#aaa;border:0;padding:14px;border-radius:4px;cursor:pointer;font-weight:bold;font-size:1rem;margin-top:8px;width:100%;";
-    btn.onclick       = cancelarEdicao;
-    document.getElementById("btn-salvar").insertAdjacentElement("afterend", btn);
-  }
- 
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
- 
-function cancelarEdicao() {
-  document.getElementById("form-title").textContent = "Agendar Novo Filme";
-  document.getElementById("btn-salvar").textContent  = "Agendar Filme";
-  document.getElementById("input-title").value       = "";
-  document.getElementById("input-date").value        = "";
-  document.getElementById("item-id").value           = "";
-  document.getElementById("btn-cancelar")?.remove();
-}
- 
-// Chamada pelo onclick="removerFilme(id)" no botão Remover de cada item
-function removerFilme(id) {
-  if (!confirm("Deseja remover este filme da agenda?")) return;
-  filmes = filmes.filter(f => f.id !== id);
-  salvarFilmes(filmes);
-  renderFilmes(filmes);
-}
- 
-// Enter nos campos do formulário dispara o salvar
-document.getElementById("input-title").addEventListener("keydown", e => {
-  if (e.key === "Enter") salvarFilme();
-});
-document.getElementById("input-date").addEventListener("keydown", e => {
-  if (e.key === "Enter") salvarFilme();
-});
- 
-document.getElementById("input-title").addEventListener("keydown", e => {
-  if (e.key === "Enter") salvarFilme();
-});
-document.getElementById("input-date").addEventListener("keydown", e => {
-  if (e.key === "Enter") salvarFilme();
+
+document.addEventListener("DOMContentLoaded", function() {
+  config_modal_api();
+  add_filme();
+  load_posts();
 });

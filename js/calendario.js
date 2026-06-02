@@ -1,321 +1,368 @@
-// ─── Estado global ──────────────────────────────────────────
-let usuarioLogado = null;
-let mesAtual = new Date().getMonth();
-let anoAtual = new Date().getFullYear();
-let dataSelecionada = null;
+// Calendário de sessões, localStorage e modais de agendamento
+var mesAtual = new Date().getMonth();
+var anoAtual = new Date().getFullYear();
+var dataSelecionada = null;
+var filmesAgendados = {};
 
-// filmesAgendados → { "YYYY-MM-DD": [ { id, titulo, horario } ] }
-let filmesAgendados = {};
+var MESES_PT = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+var DIAS_PT = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
 
-// ─── Persistência ───────────────────────────────────────────
-function salvarEstado() {
-  localStorage.setItem("pipoteca_filmes", JSON.stringify(filmesAgendados));
-}
-
-function carregarEstado() {
-  try {
-    const f = localStorage.getItem("pipoteca_filmes");
-    if (f) filmesAgendados = JSON.parse(f);
-  } catch (e) {
-    filmesAgendados = {};
-  }
-}
-
-// ─── Helpers ────────────────────────────────────────────────
 function chaveData(ano, mes, dia) {
-  return `${ano}-${String(mes + 1).padStart(2, "0")}-${String(dia).padStart(2, "0")}`;
+  return ano + "-" + String(mes + 1).padStart(2, "0") + "-" + String(dia).padStart(2, "0");
 }
 
 function uid() {
   return Math.random().toString(36).slice(2, 10);
 }
 
-// ─── 1. LOGIN ───────────────────────────────────────────────
-function iniciarLogin() {
-  const salvo = localStorage.getItem("pipoteca_usuario");
-  if (salvo) {
-    usuarioLogado = salvo;
-    mostrarApp();
-    return;
+function salvarEstado() {
+  localStorage.setItem("pipoteca_filmes", JSON.stringify(filmesAgendados));
+}
+
+function carregarEstado() {
+  try {
+    var f = localStorage.getItem("pipoteca_filmes");
+    if (f) filmesAgendados = JSON.parse(f);
+  } catch (e) {
+    filmesAgendados = {};
   }
-  criarModalLogin();
 }
-
-function criarModalLogin() {
-  if (document.getElementById("modal-login")) return;
-
-  const overlay = document.createElement("div");
-  overlay.id = "modal-login";
-  overlay.className = "modal-overlay aberto";
-  overlay.innerHTML = `
-    <div class="modal-conteudo modal-login-conteudo">
-      <h3>🍿 Bem-vindo à Pipoteca</h3>
-      <p>Digite seu nome para começar:</p>
-      <input type="text" id="input-login-nome" placeholder="Seu nome" maxlength="40" autocomplete="off">
-      <div id="login-erro" style="color:#e53;font-size:.85rem;min-height:1.2em"></div>
-      <div class="modal-botoes">
-        <button id="btn-entrar-login">Entrar</button>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(overlay);
-
-  const inputNome = document.getElementById("input-login-nome");
-  const btnEntrar = document.getElementById("btn-entrar-login");
-  const erroEl   = document.getElementById("login-erro");
-
-  function tentarLogin() {
-    const nome = inputNome.value.trim();
-    if (!nome) { erroEl.textContent = "Por favor, informe seu nome."; return; }
-    usuarioLogado = nome;
-    localStorage.setItem("pipoteca_usuario", nome);
-    overlay.remove();
-    mostrarApp();
-  }
-
-  btnEntrar.addEventListener("click", tentarLogin);
-  inputNome.addEventListener("keydown", e => { if (e.key === "Enter") tentarLogin(); });
-}
-
-function mostrarApp() {
-  const nomeEl = document.getElementById("usuario-nome");
-  if (nomeEl) nomeEl.textContent = usuarioLogado;
-
-  carregarEstado();
-  renderCalendario();
-
-  const secCal = document.getElementById("section-calendario");
-  if (secCal) secCal.style.display = "";
-}
-
-// ─── 2. CALENDÁRIO ──────────────────────────────────────────
-const MESES_PT = [
-  "Janeiro","Fevereiro","Março","Abril","Maio","Junho",
-  "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"
-];
-const DIAS_PT = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
 
 function renderCalendario() {
-  const container = document.getElementById("calendario-container");
+  var container = document.getElementById("calendario-container");
   if (!container) return;
 
-  const hoje = new Date();
-  const primeiroDia = new Date(anoAtual, mesAtual, 1).getDay();
-  const totalDias   = new Date(anoAtual, mesAtual + 1, 0).getDate();
+  var hoje = new Date();
+  var primeiroDia = new Date(anoAtual, mesAtual, 1).getDay();
+  var totalDias = new Date(anoAtual, mesAtual + 1, 0).getDate();
 
-  let html = `
-    <div class="cal-header">
-      <button class="cal-nav" id="cal-prev">&#8249;</button>
-      <span class="cal-titulo">${MESES_PT[mesAtual]} ${anoAtual}</span>
-      <button class="cal-nav" id="cal-next">&#8250;</button>
-    </div>
-    <div class="cal-grid">
-      ${DIAS_PT.map(d => `<div class="cal-dia-semana">${d}</div>`).join("")}
-  `;
+  var html = "";
+  html += '<div class="cal-header">';
+  html += '<button class="cal-nav" id="cal-prev">&#8249;</button>';
+  html += '<span class="cal-titulo">' + MESES_PT[mesAtual] + " " + anoAtual + '</span>';
+  html += '<button class="cal-nav" id="cal-next">&#8250;</button>';
+  html += '</div>';
+  html += '<div class="cal-grid">';
 
-  // Dias do mês anterior
-  const totalDiasMesAnterior = new Date(anoAtual, mesAtual, 0).getDate();
-  const inicio = totalDiasMesAnterior - primeiroDia + 1;
-  for (let i = inicio; i <= totalDiasMesAnterior; i++) {
-    let mesAnterior = mesAtual - 1;
-    let anoAnterior = anoAtual;
-    if (mesAnterior < 0) { mesAnterior = 11; anoAnterior--; }
-    const chave = chaveData(anoAnterior, mesAnterior, i);
-    html += `<div class="cal-celula cal-outro-mes" data-chave="${chave}" data-dia="${i}"><span class="cal-num">${i}</span></div>`;
+  for (var i = 0; i < DIAS_PT.length; i++) {
+    html += '<div class="cal-dia-semana">' + DIAS_PT[i] + '</div>';
   }
 
-  // Dias do mês atual
-  for (let dia = 1; dia <= totalDias; dia++) {
-    const chave     = chaveData(anoAtual, mesAtual, dia);
-    const ehHoje    = hoje.getDate() === dia && hoje.getMonth() === mesAtual && hoje.getFullYear() === anoAtual;
-    const temFilmes = filmesAgendados[chave] && filmesAgendados[chave].length > 0;
+  var totalDiasMesAnterior = new Date(anoAtual, mesAtual, 0).getDate();
+  var inicio = totalDiasMesAnterior - primeiroDia + 1;
+  for (var i = inicio; i <= totalDiasMesAnterior; i++) {
+    var mesAnterior = mesAtual - 1;
+    var anoAnterior = anoAtual;
+    if (mesAnterior < 0) { mesAnterior = 11; anoAnterior--; }
+    var chave = chaveData(anoAnterior, mesAnterior, i);
+    html += '<div class="cal-celula cal-outro-mes" data-chave="' + chave + '" data-dia="' + i + '"><span class="cal-num">' + i + '</span></div>';
+  }
 
-    let classes = "cal-celula";
-    if (ehHoje)    classes += " hoje";
+  for (var dia = 1; dia <= totalDias; dia++) {
+    var chave = chaveData(anoAtual, mesAtual, dia);
+    var Hoje = hoje.getDate() === dia && hoje.getMonth() === mesAtual && hoje.getFullYear() === anoAtual;
+    var temFilmes = filmesAgendados[chave] && filmesAgendados[chave].length > 0;
+
+    var classes = "cal-celula";
+    if (Hoje) classes += " hoje";
     if (temFilmes) classes += " tem-filme";
     if (chave === dataSelecionada) classes += " selecionado";
 
-    const qtd = temFilmes ? filmesAgendados[chave].length : 0;
+    var qtd = temFilmes ? filmesAgendados[chave].length : 0;
 
-    html += `
-      <div class="${classes}" data-chave="${chave}" data-dia="${dia}">
-        <span class="cal-num">${dia}</span>
-        ${temFilmes ? `<span class="cal-badge">${qtd}</span>` : ""}
-      </div>
-    `;
+    html += '<div class="' + classes + '" data-chave="' + chave + '" data-dia="' + dia + '">';
+    html += '<span class="cal-num">' + dia + '</span>';
+    if (temFilmes) html += '<span class="cal-badge">' + qtd + '</span>';
+    html += '</div>';
   }
 
-  // Dias do próximo mês
-  const totalCelulas = primeiroDia + totalDias;
-  const resto = totalCelulas % 7;
+  var totalCelulas = primeiroDia + totalDias;
+  var resto = totalCelulas % 7;
   if (resto !== 0) {
-    const diasProximoMes = 7 - resto;
-    for (let i = 1; i <= diasProximoMes; i++) {
-      let proximoMes = mesAtual + 1;
-      let proximoAno = anoAtual;
+    var diasProximoMes = 7 - resto;
+    for (var i = 1; i <= diasProximoMes; i++) {
+      var proximoMes = mesAtual + 1;
+      var proximoAno = anoAtual;
       if (proximoMes > 11) { proximoMes = 0; proximoAno++; }
-      const chave = chaveData(proximoAno, proximoMes, i);
-      html += `<div class="cal-celula cal-outro-mes" data-chave="${chave}" data-dia="${i}"><span class="cal-num">${i}</span></div>`;
+      var chave = chaveData(proximoAno, proximoMes, i);
+      html += '<div class="cal-celula cal-outro-mes" data-chave="' + chave + '" data-dia="' + i + '"><span class="cal-num">' + i + '</span></div>';
     }
   }
 
-  html += `</div>`;
+  html += '</div>';
   container.innerHTML = html;
 
-  // Navegação
-  document.getElementById("cal-prev").addEventListener("click", () => {
+  document.getElementById("cal-prev").addEventListener("click", function() {
     mesAtual--;
     if (mesAtual < 0) { mesAtual = 11; anoAtual--; }
     renderCalendario();
-  });
-  document.getElementById("cal-next").addEventListener("click", () => {
-    mesAtual++;
-    if (mesAtual > 11) { mesAtual = 0; anoAtual++; }
-    renderCalendario();
+    renderFilmesAgendados();
   });
 
-  // Clique nas células
-  container.querySelectorAll(".cal-celula").forEach(cel => {
-    cel.addEventListener("click", () => {
-      const chave = cel.dataset.chave;
+  document.getElementById("cal-next").addEventListener("click", function() {
+    mesAtual++;
+    if (mesAtual >= 12) { mesAtual = 0; anoAtual++; }
+    renderCalendario();
+    renderFilmesAgendados();
+  });
+
+  var celulas = container.querySelectorAll(".cal-celula");
+  for (var i = 0; i < celulas.length; i++) {
+    celulas[i].addEventListener("click", function() {
+      var chave = this.dataset.chave;
       dataSelecionada = chave;
       abrirModalAgendamento(chave);
       renderCalendario();
     });
-  });
+  }
 }
 
-// ─── 3. MODAL DE AGENDAMENTO ────────────────────────────────
 function abrirModalAgendamento(chave) {
-  const anterior = document.getElementById("modal-agendamento");
+  var anterior = document.getElementById("modal-agendamento");
   if (anterior) anterior.remove();
 
-  const [ano, mes, dia] = chave.split("-");
-  const titulo = `${dia}/${mes}/${ano}`;
+  var partes = chave.split("-");
+  var titulo = partes[2] + "/" + partes[1] + "/" + partes[0];
 
-  const overlay = document.createElement("div");
+  var overlay = document.createElement("div");
   overlay.id = "modal-agendamento";
   overlay.className = "modal-overlay aberto";
-  overlay.innerHTML = `
-    <div class="modal-conteudo modal-agenda-conteudo">
-      <h3>📅 ${titulo}</h3>
-
-      <div class="agenda-form">
-        <label>Filme:</label>
-        <div class="input-wrapper">
-          <input type="text" id="agenda-input-filme" placeholder="Nome do filme..." autocomplete="off">
-          <div id="agenda-sugestoes" class="sugestoes-dropdown"></div>
-        </div>
-        <label>Horário:</label>
-        <input type="time" id="agenda-input-horario" value="20:00">
-        <button id="agenda-btn-add" class="btn-salvar" style="margin-top:.5rem">Adicionar</button>
-      </div>
-
-      <div id="agenda-lista-filmes" class="agenda-lista"></div>
-
-      <div class="modal-botoes" style="margin-top:1rem">
-        <button id="agenda-btn-fechar">Fechar</button>
-      </div>
-    </div>
-  `;
+  overlay.innerHTML =
+    '<div class="modal-conteudo modal-agenda-conteudo">' +
+      '<h3>' + titulo + '</h3>' +
+      '<div class="agenda-form">' +
+        '<label>Filme:</label>' +
+        '<div class="input-wrapper">' +
+          '<input type="text" id="agenda-input-filme" placeholder="Nome do filme..." autocomplete="off">' +
+          '<div id="agenda-sugestoes" class="sugestoes-dropdown"></div>' +
+        '</div>' +
+        '<label>Horário:</label>' +
+        '<input type="time" id="agenda-input-horario" value="20:00">' +
+        '<button id="agenda-btn-add" class="btn-api-carregar">Adicionar</button>' +
+      '</div>' +
+      '<div id="agenda-lista-filmes" class="agenda-lista"></div>' +
+      '<div class="modal-botoes">' +
+        '<button id="agenda-btn-fechar">Fechar</button>' +
+      '</div>' +
+    '</div>';
   document.body.appendChild(overlay);
 
   renderListaFilmesDia(chave);
 
-  // Sugestões inline
-  const inputFilme = document.getElementById("agenda-input-filme");
-  const dropAgenda = document.getElementById("agenda-sugestoes");
+  var inputFilme = document.getElementById("agenda-input-filme");
+  var dropAgenda = document.getElementById("agenda-sugestoes");
 
-  function mostrarSugestoesAgenda(filtro = "") {
+  function mostrarSugestoesAgenda(filtro) {
+    if (filtro === undefined) filtro = "";
     dropAgenda.innerHTML = "";
-    const lista = filtro
-      ? filme_sugestao.filter(f => f.toLowerCase().includes(filtro.toLowerCase()))
-      : filme_sugestao;
-    if (!lista.length) { dropAgenda.classList.remove("aberto"); return; }
-    lista.slice(0, 8).forEach(f => {
-      const div = document.createElement("div");
-      div.className = "opcao";
-      div.textContent = f;
-      div.addEventListener("click", () => {
-        inputFilme.value = f;
-        dropAgenda.classList.remove("aberto");
-      });
-      dropAgenda.appendChild(div);
-    });
+    var lista = [];
+    if (filtro === "") {
+      lista = filme_sugestao;
+    } else {
+      for (var i = 0; i < filme_sugestao.length; i++) {
+        if (filme_sugestao[i].toLowerCase().indexOf(filtro.toLowerCase()) !== -1) {
+          lista.push(filme_sugestao[i]);
+        }
+      }
+    }
+    if (lista.length === 0) { dropAgenda.classList.remove("aberto"); return; }
+    for (var i = 0; i < lista.length; i++) {
+      (function(nome) {
+        var div = document.createElement("div");
+        div.className = "opcao";
+        div.textContent = nome;
+        div.addEventListener("click", function() {
+          inputFilme.value = nome;
+          dropAgenda.classList.remove("aberto");
+        });
+        dropAgenda.appendChild(div);
+      })(lista[i]);
+    }
     dropAgenda.classList.add("aberto");
   }
 
-  inputFilme.addEventListener("focus", () => mostrarSugestoesAgenda());
-  inputFilme.addEventListener("input", () => mostrarSugestoesAgenda(inputFilme.value));
+  inputFilme.addEventListener("focus", function() { mostrarSugestoesAgenda(); });
+  inputFilme.addEventListener("input", function() { mostrarSugestoesAgenda(inputFilme.value); });
   document.addEventListener("click", function fecharDrop(e) {
     if (!e.target.closest("#modal-agendamento .input-wrapper")) {
       dropAgenda.classList.remove("aberto");
     }
   });
 
-  // Adicionar filme
-  function adicionarFilme() {
-    const nome    = document.getElementById("agenda-input-filme").value.trim();
-    const horario = document.getElementById("agenda-input-horario").value;
+  document.getElementById("agenda-btn-add").addEventListener("click", function() {
+    var nome = document.getElementById("agenda-input-filme").value.trim();
+    var horario = document.getElementById("agenda-input-horario").value;
     if (!nome) { alert("Digite o nome do filme."); return; }
     if (!filmesAgendados[chave]) filmesAgendados[chave] = [];
-
-    const conflito = filmesAgendados[chave].find(f => f.horario === horario);
-    if (conflito) {
-      alert(`⚠️ Já existe "${conflito.titulo}" agendado para as ${horario} neste dia.`);
-      return;
+    var conflito = false;
+    for (var i = 0; i < filmesAgendados[chave].length; i++) {
+      if (filmesAgendados[chave][i].horario === horario) {
+        conflito = true;
+        alert("Já existe \"" + filmesAgendados[chave][i].titulo + "\" agendado para as " + horario + " neste dia.");
+        break;
+      }
     }
-
-    filmesAgendados[chave].push({ id: uid(), titulo: nome, horario });
-    filmesAgendados[chave].sort((a, b) => a.horario.localeCompare(b.horario));
+    if (conflito) return;
+    filmesAgendados[chave].push({ id: uid(), titulo: nome, horario: horario });
+    filmesAgendados[chave].sort(function(a, b) { return a.horario.localeCompare(b.horario); });
     salvarEstado();
     renderListaFilmesDia(chave);
     renderCalendario();
+    renderFilmesAgendados();
     document.getElementById("agenda-input-filme").value = "";
-  }
+  });
 
-  document.getElementById("agenda-btn-add").addEventListener("click", adicionarFilme);
-  inputFilme.addEventListener("keydown", e => {
-    if (e.key === "Enter") adicionarFilme();
+  inputFilme.addEventListener("keydown", function(e) {
+    if (e.key === "Enter") document.getElementById("agenda-btn-add").click();
     if (e.key === "Escape") overlay.remove();
   });
 
-  document.getElementById("agenda-btn-fechar").addEventListener("click", () => overlay.remove());
-  overlay.addEventListener("click", e => { if (e.target === overlay) overlay.remove(); });
+  document.getElementById("agenda-btn-fechar").addEventListener("click", function() { overlay.remove(); });
+  overlay.addEventListener("click", function(e) { if (e.target === overlay) overlay.remove(); });
 }
 
-// ─── Renderiza lista de filmes dentro do modal ───────────────
 function renderListaFilmesDia(chave) {
-  const container = document.getElementById("agenda-lista-filmes");
+  var container = document.getElementById("agenda-lista-filmes");
   if (!container) return;
-
-  const filmes = filmesAgendados[chave] || [];
-  if (!filmes.length) {
-    container.innerHTML = `<p class="agenda-vazia">Nenhum filme agendado para este dia.</p>`;
+  var filmes = filmesAgendados[chave] || [];
+  if (filmes.length === 0) {
+    container.innerHTML = '<p class="agenda-vazia">Nenhum filme agendado para este dia.</p>';
     return;
   }
+  var html = "";
+  for (var i = 0; i < filmes.length; i++) {
+    html += '<div class="agenda-item" data-id="' + filmes[i].id + '">' +
+      '<span class="agenda-horario">' + filmes[i].horario + '</span>' +
+      '<span class="agenda-titulo">' + filmes[i].titulo + '</span>' +
+      '<div class="agenda-acoes">' +
+        '<button class="agenda-edit" data-id="' + filmes[i].id + '" title="Editar">✎</button>' +
+        '<button class="agenda-del" data-id="' + filmes[i].id + '" title="Remover">✕</button>' +
+      '</div>' +
+    '</div>';
+  }
+  container.innerHTML = html;
 
-  container.innerHTML = filmes.map(f => `
-    <div class="agenda-item" data-id="${f.id}">
-      <span class="agenda-horario">${f.horario}</span>
-      <span class="agenda-titulo">${f.titulo}</span>
-      <button class="agenda-del" data-id="${f.id}" title="Remover">✕</button>
-    </div>
-  `).join("");
-
-  container.querySelectorAll(".agenda-del").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const id = btn.dataset.id;
-      filmesAgendados[chave] = filmesAgendados[chave].filter(f => f.id !== id);
-      if (!filmesAgendados[chave].length) delete filmesAgendados[chave];
-      salvarEstado();
-      renderListaFilmesDia(chave);
-      renderCalendario();
+  var botoesEdit = container.querySelectorAll(".agenda-edit");
+  for (var i = 0; i < botoesEdit.length; i++) {
+    botoesEdit[i].addEventListener("click", function() {
+      var id = this.dataset.id;
+      editarFilme(chave, id);
     });
-  });
+  }
+
+  var botoesDel = container.querySelectorAll(".agenda-del");
+  for (var i = 0; i < botoesDel.length; i++) {
+    botoesDel[i].addEventListener("click", function() {
+      var id = this.dataset.id;
+      removerFilme(chave, id);
+    });
+  }
 }
 
-// ─── Inicialização ───────────────────────────────────────────
-document.addEventListener("DOMContentLoaded", () => {
-  iniciarLogin();
-});
+function editarFilme(chave, id) {
+  var filmes = filmesAgendados[chave];
+  var filme = null;
+  var index = -1;
+  for (var i = 0; i < filmes.length; i++) {
+    if (filmes[i].id === id) {
+      filme = filmes[i];
+      index = i;
+      break;
+    }
+  }
+  if (!filme) return;
+
+  var novoTitulo = prompt("Editar nome do filme:", filme.titulo);
+  if (novoTitulo === null) return;
+  novoTitulo = novoTitulo.trim();
+  if (!novoTitulo) return;
+
+  var novoHorario = prompt("Editar horário (HH:MM):", filme.horario);
+  if (novoHorario === null) return;
+  novoHorario = novoHorario.trim();
+  if (!novoHorario) return;
+
+  filmesAgendados[chave][index].titulo = novoTitulo;
+  filmesAgendados[chave][index].horario = novoHorario;
+  filmesAgendados[chave].sort(function(a, b) { return a.horario.localeCompare(b.horario); });
+
+  salvarEstado();
+  renderListaFilmesDia(chave);
+  renderCalendario();
+  renderFilmesAgendados();
+}
+
+function removerFilme(chave, id) {
+  if (!filmesAgendados[chave]) return;
+  var novaLista = [];
+  for (var j = 0; j < filmesAgendados[chave].length; j++) {
+    if (filmesAgendados[chave][j].id !== id) {
+      novaLista.push(filmesAgendados[chave][j]);
+    }
+  }
+  filmesAgendados[chave] = novaLista;
+  if (filmesAgendados[chave].length === 0) delete filmesAgendados[chave];
+  salvarEstado();
+  renderListaFilmesDia(chave);
+  renderCalendario();
+  renderFilmesAgendados();
+}
+
+function renderFilmesAgendados() {
+  var lista = document.getElementById("lista-filmes");
+  if (!lista) return;
+  var chaves = [];
+  for (var chave in filmesAgendados) {
+    if (filmesAgendados.hasOwnProperty(chave)) {
+      chaves.push(chave);
+    }
+  }
+  chaves.sort();
+  if (chaves.length === 0) {
+    lista.innerHTML = '<li class="sem-filmes">Nenhum filme agendado ainda. Clique em uma data no calendário para começar!</li>';
+    return;
+  }
+  var html = "";
+  for (var i = 0; i < chaves.length; i++) {
+    var partes = chaves[i].split("-");
+    var dataFormatada = partes[2] + "/" + partes[1] + "/" + partes[0];
+    var filmes = filmesAgendados[chaves[i]];
+    html += '<li class="dia-agendado">' +
+      '<div class="dia-cabecalho"><strong>' + dataFormatada + '</strong></div>' +
+      '<div class="dia-filmes">';
+    for (var j = 0; j < filmes.length; j++) {
+      html += '<div class="filme-item">' +
+        '<span class="filme-horario">' + filmes[j].horario + '</span>' +
+        '<span class="filme-titulo">' + filmes[j].titulo + '</span>' +
+        '<div class="filme-acoes">' +
+          '<button class="filme-edit" data-chave="' + chaves[i] + '" data-id="' + filmes[j].id + '" title="Editar">✎</button>' +
+          '<button class="filme-del" data-chave="' + chaves[i] + '" data-id="' + filmes[j].id + '" title="Remover">✕</button>' +
+        '</div>' +
+      '</div>';
+    }
+    html += '</div></li>';
+  }
+  lista.innerHTML = html;
+
+  var botoesEdit = lista.querySelectorAll(".filme-edit");
+  for (var i = 0; i < botoesEdit.length; i++) {
+    botoesEdit[i].addEventListener("click", function() {
+      var chave = this.dataset.chave;
+      var id = this.dataset.id;
+      editarFilme(chave, id);
+    });
+  }
+
+  var botoesDel = lista.querySelectorAll(".filme-del");
+  for (var i = 0; i < botoesDel.length; i++) {
+    botoesDel[i].addEventListener("click", function() {
+      var chave = this.dataset.chave;
+      var id = this.dataset.id;
+      removerFilme(chave, id);
+    });
+  }
+}
+
+carregarEstado();
+renderCalendario();
+renderFilmesAgendados();
