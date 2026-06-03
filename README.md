@@ -1,3 +1,7 @@
+# Nomes dos particpantes: 
+
+## Brenda Schlosser Peters, Gabriela Jantsch, Gabriela Vitoria Guths
+
 # Calendário de filmes 
 
 Uma forma do usuário agendar e organizar sua noite do cinema em casa. Priorizando e organizando seus momentos de lazer com o melhor do cinema.
