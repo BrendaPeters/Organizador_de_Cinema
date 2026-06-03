@@ -1,6 +1,6 @@
 ## Nomes dos particpantes: 
 
-Brenda Schlosser Peters, Gabriela Jantsch, Gabriela Vitoria Guths 
+# Brenda Schlosser Peters, Gabriela Jantsch, Gabriela Vitoria Guths 
 
 Todas as participantes do grupo contribuiram com o HTML, CSS e o JS. 
 
