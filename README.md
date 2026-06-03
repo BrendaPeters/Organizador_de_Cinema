@@ -1,3 +1,8 @@
+## Brenda Schlosser Peters
+## Gabriela Jantsch
+## Gabriela Vitoria Guths 
+Todas as participantes do grupo contribuiram com o HTML, CSS e o JS. 
+
 # Calendário de filmes 
 
 Uma forma do usuário agendar e organizar sua noite do cinema em casa. Priorizando e organizando seus momentos de lazer com o melhor do cinema.
@@ -35,3 +40,5 @@ Adicionar um novo item ao array e atualizar a tela
 Remover um item do array e atualizar
 
 Editar um item existente# Organizador_de_Cinema
+
+
