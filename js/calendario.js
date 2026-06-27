@@ -136,8 +136,11 @@ function abrirModalAgendamento(chave) {
           '<input type="text" id="agenda-input-filme" placeholder="Nome do filme..." autocomplete="off">' +
           '<div id="agenda-sugestoes" class="sugestoes-dropdown"></div>' +
         '</div>' +
+        '<a href="#" id="agenda-add-filme-btn" style="display:block;text-align:right;font-size:.8rem;color:#7159c1;margin-top:2px;text-decoration:none;">+ Adicionar filme</a>' +
         '<label>Horário:</label>' +
-        '<input type="time" id="agenda-input-horario" value="20:00">' +
+        '<div id="agenda-horario-wrapper" style="position:relative;border:1px solid #55555a;border-radius:6px;background:#121214;cursor:pointer;margin-bottom:16px;height:38px;box-sizing:border-box;">' +
+          '<input type="time" id="agenda-input-horario" value="20:00" style="position:absolute;top:50%;left:0;right:0;transform:translateY(-50%);width:100%;padding:0 10px;background:transparent;border:none;border-radius:6px;color:#fff;font-size:0.95rem;cursor:pointer;outline:none;box-sizing:border-box;">' +
+        '</div>' +
         '<button id="agenda-btn-add" class="btn-api-carregar">Adicionar</button>' +
       '</div>' +
       '<div id="agenda-lista-filmes" class="agenda-lista"></div>' +
@@ -148,6 +151,10 @@ function abrirModalAgendamento(chave) {
   document.body.appendChild(overlay);
 
   renderListaFilmesDia(chave);
+
+  document.getElementById("agenda-horario-wrapper").addEventListener("click", function() {
+    document.getElementById("agenda-input-horario").showPicker();
+  });
 
   var inputFilme = document.getElementById("agenda-input-filme");
   var dropAgenda = document.getElementById("agenda-sugestoes");
@@ -189,6 +196,11 @@ function abrirModalAgendamento(chave) {
     }
   });
 
+  document.getElementById("agenda-add-filme-btn").addEventListener("click", function(e) {
+    e.preventDefault();
+    modalAdicionarFilme();
+  });
+
   document.getElementById("agenda-btn-add").addEventListener("click", function() {
     var nomeDigitado = document.getElementById("agenda-input-filme").value.trim();
     var horario = document.getElementById("agenda-input-horario").value;
@@ -196,7 +208,7 @@ function abrirModalAgendamento(chave) {
 
     var nome = buscarFilmeNaSugestao(nomeDigitado);
     if (!nome) {
-      alert("Este filme não está na lista. Escolha um da lista ou adicione em \"+ Adicionar novo filme\".");
+      modalAdicionarFilme(nomeDigitado);
       return;
     }
 
@@ -266,20 +278,81 @@ function renderListaFilmesDia(chave) {
   }
 }
 
+function confirmarRemocao(titulo, callback) {
+  var overlay = document.createElement("div");
+  overlay.className = "modal-overlay aberto";
+
+  var conteudo = document.createElement("div");
+  conteudo.className = "modal-conteudo";
+  conteudo.style.maxWidth = "360px";
+
+  var tituloEl = document.createElement("h3");
+  tituloEl.textContent = "Remover filme";
+
+  var msg = document.createElement("p");
+  msg.textContent = 'Tem certeza que deseja remover "' + titulo + '"?';
+  msg.style.cssText = "margin: 8px 0 20px; color: #a8a8b3; font-size: 0.95rem;";
+
+  var botoes = document.createElement("div");
+  botoes.className = "modal-botoes";
+
+  var btnCancelar = document.createElement("button");
+  btnCancelar.type = "button";
+  btnCancelar.textContent = "Cancelar";
+  btnCancelar.style.cssText = "background:#333;color:#fff;border:0;border-radius:6px;padding:10px 20px;cursor:pointer;font-weight:600;font-size:0.9rem;";
+
+  var btnRemover = document.createElement("button");
+  btnRemover.type = "button";
+  btnRemover.textContent = "Remover";
+  btnRemover.style.cssText = "background:#e55;color:#fff;border:0;border-radius:6px;padding:10px 20px;cursor:pointer;font-weight:600;font-size:0.9rem;";
+
+  botoes.appendChild(btnCancelar);
+  botoes.appendChild(btnRemover);
+  conteudo.appendChild(tituloEl);
+  conteudo.appendChild(msg);
+  conteudo.appendChild(botoes);
+  overlay.appendChild(conteudo);
+  document.body.appendChild(overlay);
+
+  function fechar(resultado) {
+    overlay.remove();
+    if (callback) callback(resultado);
+  }
+
+  btnCancelar.addEventListener("click", function() { fechar(false); });
+  btnRemover.addEventListener("click", function() { fechar(true); });
+  overlay.addEventListener("click", function(e) {
+    if (e.target === overlay) fechar(false);
+  });
+}
+
 function removerFilme(chave, id) {
   if (!filmesAgendados[chave]) return;
-  var novaLista = [];
+  var filme = null;
   for (var j = 0; j < filmesAgendados[chave].length; j++) {
-    if (filmesAgendados[chave][j].id !== id) {
-      novaLista.push(filmesAgendados[chave][j]);
+    if (filmesAgendados[chave][j].id === id) {
+      filme = filmesAgendados[chave][j];
+      break;
     }
   }
-  filmesAgendados[chave] = novaLista;
-  if (filmesAgendados[chave].length === 0) delete filmesAgendados[chave];
-  salvarEstado();
-  renderListaFilmesDia(chave);
-  renderCalendario();
-  renderFilmesAgendados();
+  if (!filme) return;
+
+  confirmarRemocao(filme.titulo + " (" + filme.horario + ")", function(confirmado) {
+    if (!confirmado) return;
+
+    var novaLista = [];
+    for (var j = 0; j < filmesAgendados[chave].length; j++) {
+      if (filmesAgendados[chave][j].id !== id) {
+        novaLista.push(filmesAgendados[chave][j]);
+      }
+    }
+    filmesAgendados[chave] = novaLista;
+    if (filmesAgendados[chave].length === 0) delete filmesAgendados[chave];
+    salvarEstado();
+    renderListaFilmesDia(chave);
+    renderCalendario();
+    renderFilmesAgendados();
+  });
 }
 
 function renderFilmesAgendados() {

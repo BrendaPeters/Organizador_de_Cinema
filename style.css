@@ -234,7 +234,7 @@ h2 {
   line-height: 1.4;
 }
 
-.input-wrapper { position: relative; width: 100%; }
+.input-wrapper { position: relative; width: 395px; height: 45px; max-width: 100%; }
 
 .sugestoes-dropdown {
   display: none;
@@ -245,10 +245,9 @@ h2 {
   background: #202024;
   border: 1px solid #7159c144;
   border-radius: 6px;
-  max-height: min(60vh, 360px);
+  max-height: min(60vh, 350px);
   overflow-y: auto;
   z-index: 10;
-  margin-top: 4px;
 }
 
 .sugestoes-dropdown.aberto { display: block; }
@@ -333,6 +332,9 @@ h2 {
 .select-filmes option {
   padding: 6px 8px;
 }
+
+input[type="time"] { color-scheme: dark; accent-color: #ccc; }
+input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(0.85); cursor: pointer; }
 
 .modal-fechar-api {
   position: absolute;
@@ -527,7 +529,7 @@ h2 {
 .filme-edit:hover, .agenda-edit:hover { color: #9169f1; }
 .modal-agenda-conteudo { max-width: 440px; width: 95vw; }
 .modal-agenda-conteudo h3 { margin-bottom: .75rem; }
-.agenda-form { display: flex; flex-direction: column; gap: .4rem; margin-bottom: 1rem; }
+.agenda-form { display: flex; flex-direction: column; gap: .2rem; margin-bottom: 0; }
 .agenda-form label { font-size: .85rem; color: #aaa; }
 
 .agenda-form input[type="time"] {
@@ -552,6 +554,7 @@ h2 {
 
 .agenda-acoes { display: flex; gap: 4px; }
 
+.agenda-horario-wrapper { height: 45px;}
 .agenda-horario { font-size: .8rem; font-weight: 700; color: #e2b04a; min-width: 42px; }
 .agenda-titulo { flex: 1; font-size: .9rem; }
 
@@ -566,6 +569,7 @@ h2 {
   cursor: pointer;
   font-weight: 600;
   font-size: 0.95rem;
+  margin-top: 8px;
 }
 
 #agenda-btn-fechar:hover { background: #444; }

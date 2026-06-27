@@ -128,6 +128,64 @@ function escolherFilmeSugerido(tituloAtual, aoEscolher) {
   });
 }
 
+function modalEditar(horarioAtual, callback) {
+  var overlay = document.createElement("div");
+  overlay.className = "modal-overlay aberto";
+
+  var conteudo = document.createElement("div");
+  conteudo.className = "modal-conteudo";
+  conteudo.style.maxWidth = "280px";
+
+  var tituloEl = document.createElement("h3");
+  tituloEl.textContent = "Editar horário";
+
+  var input = document.createElement("input");
+  input.type = "time";
+  input.value = horarioAtual;
+  input.style.cssText = "width:100%;padding:6px 10px;background:#121214;border:1px solid #29292e;border-radius:6px;color:#fff;font-size:1.1rem;cursor:pointer;outline:none;box-sizing:border-box;";
+
+  input.id = "input-horario";
+  input.style.marginBottom = "16px";
+
+  var botoes = document.createElement("div");
+  botoes.className = "modal-botoes";
+
+  var btnCancelar = document.createElement("button");
+  btnCancelar.type = "button";
+  btnCancelar.textContent = "Cancelar";
+  btnCancelar.style.cssText = "background:#333;color:#fff;border:0;border-radius:6px;padding:8px 18px;cursor:pointer;font-weight:600;font-size:0.85rem;";
+
+  var btnSalvar = document.createElement("button");
+  btnSalvar.type = "button";
+  btnSalvar.textContent = "Salvar";
+  btnSalvar.style.cssText = "background:#04d361;color:#fff;border:0;border-radius:6px;padding:8px 18px;cursor:pointer;font-weight:600;font-size:0.85rem;";
+
+  botoes.appendChild(btnCancelar);
+  botoes.appendChild(btnSalvar);
+  conteudo.appendChild(tituloEl);
+  conteudo.appendChild(input);
+  conteudo.appendChild(botoes);
+  overlay.appendChild(conteudo);
+  document.body.appendChild(overlay);
+
+  function fechar(resultado) {
+    overlay.remove();
+    if (callback) callback(resultado);
+  }
+
+  btnCancelar.addEventListener("click", function() { fechar(null); });
+  btnSalvar.addEventListener("click", function() { fechar(input.value || null); });
+  input.addEventListener("keydown", function(e) {
+    if (e.key === "Enter") btnSalvar.click();
+    if (e.key === "Escape") fechar(null);
+  });
+  overlay.addEventListener("click", function(e) {
+    if (e.target === overlay) fechar(null);
+  });
+
+  setTimeout(function() { input.focus(); }, 50);
+}
+
 function editarFilmeAgendado(chave, id) {
   if (!filmesAgendados[chave]) return;
 
@@ -147,24 +205,25 @@ function editarFilmeAgendado(chave, id) {
   escolherFilmeSugerido(filme.titulo, function(novoTitulo) {
     if (novoTitulo === null) return;
 
-    var novoHorario = prompt("Editar horário (HH:MM):", filme.horario);
-    if (novoHorario === null) return;
-    novoHorario = novoHorario.trim();
-    if (!novoHorario) return;
+    modalEditar(filme.horario, function(novoHorario) {
+      if (novoHorario === null) return;
+      novoHorario = novoHorario.trim();
+      if (!novoHorario) return;
 
-    filmesAgendados[chave][index].titulo = novoTitulo;
-    filmesAgendados[chave][index].horario = novoHorario;
-    filmesAgendados[chave].sort(function(a, b) {
-      return a.horario.localeCompare(b.horario);
+      filmesAgendados[chave][index].titulo = novoTitulo;
+      filmesAgendados[chave][index].horario = novoHorario;
+      filmesAgendados[chave].sort(function(a, b) {
+        return a.horario.localeCompare(b.horario);
+      });
+
+      salvarEstado();
+      renderCalendario();
+      renderFilmesAgendados();
+
+      if (document.getElementById("agenda-lista-filmes")) {
+        renderListaFilmesDia(chave);
+      }
     });
-
-    salvarEstado();
-    renderCalendario();
-    renderFilmesAgendados();
-
-    if (document.getElementById("agenda-lista-filmes")) {
-      renderListaFilmesDia(chave);
-    }
   });
 }
 
@@ -179,37 +238,125 @@ function configurarEdicaoFilmes() {
   });
 }
 
-function add_filme() {
-  var listaFilmes = document.getElementById("lista-filmes");
-  if (!listaFilmes) return;
+function modalAdicionarFilme(nomeSugerido) {
+  var overlay = document.createElement("div");
+  overlay.className = "modal-overlay aberto";
 
-  var botao_add = document.createElement("div");
-  botao_add.innerHTML = '<a href="#" id="link-add-filme">+ Adicionar novo filme</a>';
-  listaFilmes.parentNode.insertBefore(botao_add, listaFilmes.nextSibling);
+  var conteudo = document.createElement("div");
+  conteudo.className = "modal-conteudo";
+  conteudo.style.maxWidth = "340px";
 
-  document.getElementById("link-add-filme").addEventListener("click", function(evento) {
-    evento.preventDefault();
+  var tituloEl = document.createElement("h3");
+  tituloEl.textContent = "Adicionar filme";
 
-    var nomeFilme = prompt("Digite o nome do filme:");
-    if (nomeFilme === null || nomeFilme.trim() === "") return;
-    nomeFilme = nomeFilme.trim();
+  var wrapper = document.createElement("div");
+  wrapper.style.cssText = "position:relative;margin-bottom:16px;";
 
-    var tem_filme = false;
+  var input = document.createElement("input");
+  input.type = "text";
+  input.placeholder = "Nome do filme...";
+  if (nomeSugerido) input.value = nomeSugerido;
+  input.style.cssText = "width:100%;padding:10px 12px;background:#121214;border:1px solid #29292e;border-radius:6px;color:#fff;font-size:0.95rem;outline:none;box-sizing:border-box;";
+
+  var dropdown = document.createElement("div");
+  dropdown.style.cssText = "display:none;position:absolute;top:100%;left:0;right:0;background:#202024;border:1px solid #7159c144;border-radius:6px;max-height:200px;overflow-y:auto;z-index:10;";
+
+  function mostrarSugestoes(filtro) {
+    dropdown.innerHTML = "";
+    var lista = [];
     for (var i = 0; i < filme_sugestao.length; i++) {
-      if (filme_sugestao[i].toLowerCase() === nomeFilme.toLowerCase()) {
-        tem_filme = true;
-        break;
+      if (!filtro || filme_sugestao[i].toLowerCase().indexOf(filtro.toLowerCase()) !== -1) {
+        lista.push(filme_sugestao[i]);
+      }
+    }
+    if (lista.length === 0 || lista.length === filme_sugestao.length) {
+      dropdown.style.display = "none";
+      return;
+    }
+    for (var i = 0; i < lista.length; i++) {
+      (function(nome) {
+        var div = document.createElement("div");
+        div.textContent = nome;
+        div.style.cssText = "padding:8px 12px;cursor:pointer;color:#ccc;font-size:0.9rem;border-bottom:1px solid #29292e;";
+        div.addEventListener("mouseenter", function() { this.style.background = "#7159c122"; this.style.color = "#fff"; });
+        div.addEventListener("mouseleave", function() { this.style.background = ""; this.style.color = "#ccc"; });
+        div.addEventListener("click", function() {
+          input.value = nome;
+          dropdown.style.display = "none";
+        });
+        dropdown.appendChild(div);
+      })(lista[i]);
+    }
+    dropdown.style.display = "block";
+  }
+
+  wrapper.appendChild(input);
+  wrapper.appendChild(dropdown);
+  conteudo.appendChild(tituloEl);
+  conteudo.appendChild(wrapper);
+
+  var msg = document.createElement("p");
+  msg.style.cssText = "display:none;font-size:0.85rem;margin:-8px 0 12px;padding:0;";
+
+  var botoes = document.createElement("div");
+  botoes.className = "modal-botoes";
+
+  var btnCancelar = document.createElement("button");
+  btnCancelar.type = "button";
+  btnCancelar.textContent = "Cancelar";
+  btnCancelar.style.cssText = "background:#333;color:#fff;border:0;border-radius:6px;padding:8px 18px;cursor:pointer;font-weight:600;font-size:0.85rem;";
+
+  var btnAdicionar = document.createElement("button");
+  btnAdicionar.type = "button";
+  btnAdicionar.textContent = "Adicionar";
+  btnAdicionar.style.cssText = "background:#7159c1;color:#fff;border:0;border-radius:6px;padding:8px 18px;cursor:pointer;font-weight:600;font-size:0.85rem;";
+
+  botoes.appendChild(btnCancelar);
+  botoes.appendChild(btnAdicionar);
+  conteudo.appendChild(msg);
+  conteudo.appendChild(botoes);
+  overlay.appendChild(conteudo);
+  document.body.appendChild(overlay);
+
+  function fechar() {
+    overlay.remove();
+  }
+
+  input.addEventListener("focus", function() { mostrarSugestoes(input.value); });
+  input.addEventListener("input", function() { mostrarSugestoes(input.value); });
+  document.addEventListener("click", function fecharDrop(e) {
+    if (!wrapper.contains(e.target)) dropdown.style.display = "none";
+  });
+
+  btnCancelar.addEventListener("click", function() { fechar(); });
+  btnAdicionar.addEventListener("click", function() {
+    var nome = input.value.trim();
+    if (!nome) return;
+
+    for (var i = 0; i < filme_sugestao.length; i++) {
+      if (filme_sugestao[i].toLowerCase() === nome.toLowerCase()) {
+        msg.style.cssText = "font-size:0.85rem;margin:-10px 0 12px;padding:0;color:#e2b04a;display:block;";
+        msg.textContent = "Este filme já está na lista!";
+        return;
       }
     }
 
-    if (tem_filme === false) {
-      filme_sugestao.push(nomeFilme);
-      filme_sugestao.sort();
-      alert("Filme '" + nomeFilme + "' adicionado às sugestões!");
-    } else {
-      alert("Este filme já está na lista!");
-    }
+    filme_sugestao.push(nome);
+    filme_sugestao.sort();
+    msg.style.cssText = "font-size:0.85rem;margin:-10px 0 12px;padding:0;color:#04d361;display:block;";
+    msg.textContent = "Filme adicionado com sucesso!";
+    input.value = "";
+    dropdown.style.display = "none";
   });
+  input.addEventListener("keydown", function(e) {
+    if (e.key === "Enter") btnAdicionar.click();
+    if (e.key === "Escape") fechar();
+  });
+  overlay.addEventListener("click", function(e) {
+    if (e.target === overlay) fechar();
+  });
+
+  setTimeout(function() { input.focus(); }, 50);
 }
 
 function load_posts() {
@@ -251,6 +398,5 @@ function load_posts() {
 document.addEventListener("DOMContentLoaded", function() {
   config_modal_api();
   configurarEdicaoFilmes();
-  add_filme();
   load_posts();
 });
