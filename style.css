@@ -15,7 +15,7 @@ body {
   height: 100vh;
   overflow: hidden;
   max-width: 100vw;
-  font-family: "Pixelify Sans", sans-serif;
+  font-family: "Inter", "Pixelify Sans", sans-serif;
 }
 
 body::before {
@@ -92,8 +92,15 @@ header p {
   object-fit: cover;
 }
 
-.banner-track-up { animation: scrollUp 85s linear infinite; }
-.banner-track-down { animation: scrollDown 85s linear infinite; }
+.banner-track-up { animation: scrollUp 180s linear infinite; }
+.banner-track-down { animation: scrollDown 180s linear infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .banner-track-up,
+  .banner-track-down {
+    animation: none;
+  }
+}
 
 @keyframes scrollUp {
   0% { transform: translateY(0); }
@@ -129,6 +136,7 @@ h2 {
   margin-bottom: 14px;
   border-bottom: 1px solid #29292e;
   padding-bottom: 8px;
+  font-family: "Pixelify Sans", sans-serif;
 }
 
 #calendario-container {
@@ -317,7 +325,7 @@ h2 {
   border: 1px solid #29292e;
   border-radius: 6px;
   padding: 6px;
-  font-family: "Pixelify Sans", sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 0.9rem;
   margin-bottom: 16px;
 }
