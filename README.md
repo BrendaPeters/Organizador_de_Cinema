@@ -1,10 +1,34 @@
-# Nomes dos particpantes: 
+# Nomes dos participantes: 
 
 ## Brenda Schlosser Peters, Gabriela Jantsch, Gabriela Vitoria Guths
 
 # Calendário de filmes 
 
 Uma forma do usuário agendar e organizar sua noite do cinema em casa. Priorizando e organizando seus momentos de lazer com o melhor do cinema.
+
+## Heurísticas de Nilsen aplicadas:
+<br>
+- Controle e liberdade do usuário
+
+'
+ Confirmação ao remover filme — modal de confirmação antes de excluir 
+
+ Editar horário com modal — substituiu prompt("Editar horário (HH:MM):") por <input type="time"> 
+
+ Removemos os alert()/prompt() por modal com dropdown de sugestões e feedback inline 
+
+ Campo de horário clicável — wrapper com showPicker() para clicar em qualquer área do campo 
+
+ Ajustes visuais finos (padding, gaps excessivos e etc)
+'
+
+<br>
+- Estética e design minimalista
+
+'
+Fonte alterada (mais legível)
+Velocidade do banner reduzida (85s → 180s)
+'
 
 ## Tarefas:
 Permitir gerenciar e ordenar no calendário
@@ -21,21 +45,3 @@ Garantir que o formulário de adicionar novos itens não quebre o layout da tela
 
 Incluir as informações dentro do layout do HTML e ajustes de CSS
 ---
-### (JavaScript & API)
-
-
-Tarefas:
-
--Criar o arquivo script.js e fazer a função fetch buscar os dados da API do JSONPlaceholder.
-
--Criar o array local para guardar esses dados na memória do navegador
-
--Criar as funções de Manipulação do DOM para:
-
-Inserir a lista na tela
-
-Adicionar um novo item ao array e atualizar a tela
-
-Remover um item do array e atualizar
-
-Editar um item existente# Organizador_de_Cinema
